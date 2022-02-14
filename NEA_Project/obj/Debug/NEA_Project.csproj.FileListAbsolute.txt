@@ -1,0 +1,11 @@
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\bin\Debug\NEA_Project.exe.config
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\bin\Debug\NEA_Project.exe
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\bin\Debug\NEA_Project.pdb
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.Properties.Resources.resources
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.GenerateResource.cache
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.CoreCompileInputs.cache
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.exe
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.pdb
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.login_page.resources
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csprojAssemblyReference.cache
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.Main_Page.resources
