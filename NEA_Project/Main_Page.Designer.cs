@@ -30,7 +30,7 @@ namespace NEA_Project
 		private void InitializeComponent()
 		{
 			this.Input_Img_Display = new System.Windows.Forms.PictureBox();
-			this.Result_Img = new System.Windows.Forms.PictureBox();
+			this.Result_Img_Display = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.Remove_BG_Btn = new System.Windows.Forms.Button();
 			this.Main_Menu_Logo_Temp = new System.Windows.Forms.Label();
@@ -39,7 +39,7 @@ namespace NEA_Project
 			this.Convert_To_Text_Btn = new System.Windows.Forms.Button();
 			this.Image_Error_Display = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.Input_Img_Display)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.Result_Img)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.Result_Img_Display)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// Input_Img_Display
@@ -54,15 +54,15 @@ namespace NEA_Project
 			this.Input_Img_Display.DragDrop += new System.Windows.Forms.DragEventHandler(this.Input_Img_Display_DragDrop);
 			this.Input_Img_Display.DragEnter += new System.Windows.Forms.DragEventHandler(this.Input_Img_Display_DragEnter);
 			// 
-			// Result_Img
+			// Result_Img_Display
 			// 
-			this.Result_Img.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Result_Img.Location = new System.Drawing.Point(312, 12);
-			this.Result_Img.Name = "Result_Img";
-			this.Result_Img.Size = new System.Drawing.Size(262, 426);
-			this.Result_Img.TabIndex = 1;
-			this.Result_Img.TabStop = false;
-			this.Result_Img.Click += new System.EventHandler(this.Result_Img_Click);
+			this.Result_Img_Display.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Result_Img_Display.Location = new System.Drawing.Point(312, 12);
+			this.Result_Img_Display.Name = "Result_Img_Display";
+			this.Result_Img_Display.Size = new System.Drawing.Size(262, 426);
+			this.Result_Img_Display.TabIndex = 1;
+			this.Result_Img_Display.TabStop = false;
+			this.Result_Img_Display.Click += new System.EventHandler(this.Result_Img_Click);
 			// 
 			// label1
 			// 
@@ -121,6 +121,7 @@ namespace NEA_Project
 			this.Convert_To_Text_Btn.TabIndex = 7;
 			this.Convert_To_Text_Btn.Text = "Submit";
 			this.Convert_To_Text_Btn.UseVisualStyleBackColor = true;
+			this.Convert_To_Text_Btn.Click += new System.EventHandler(this.Convert_To_Text_Btn_Click);
 			// 
 			// Image_Error_Display
 			// 
@@ -143,13 +144,13 @@ namespace NEA_Project
 			this.Controls.Add(this.Main_Menu_Logo_Temp);
 			this.Controls.Add(this.Remove_BG_Btn);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.Result_Img);
+			this.Controls.Add(this.Result_Img_Display);
 			this.Controls.Add(this.Input_Img_Display);
 			this.Name = "Main_Page";
 			this.Text = "Main_Page";
 			this.Load += new System.EventHandler(this.Main_Page_Load);
 			((System.ComponentModel.ISupportInitialize)(this.Input_Img_Display)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.Result_Img)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.Result_Img_Display)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -158,7 +159,7 @@ namespace NEA_Project
 		#endregion
 
 		private System.Windows.Forms.PictureBox Input_Img_Display;
-		private System.Windows.Forms.PictureBox Result_Img;
+		private System.Windows.Forms.PictureBox Result_Img_Display;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button Remove_BG_Btn;
 		private System.Windows.Forms.Label Main_Menu_Logo_Temp;

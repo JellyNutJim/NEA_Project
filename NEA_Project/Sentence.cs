@@ -10,12 +10,12 @@ using System.Windows.Forms;
 
 namespace NEA_Project
 {
-	class Sentance
+	class Sentence
 	{
 
 	}
 
-	class Word : Sentance
+	class Word : Sentence
 	{
 		
 	}
@@ -27,14 +27,5 @@ namespace NEA_Project
 
 	}
 
-	class createLetter 
-	{
-		Bitmap Letter;
-		public void AddColour(Color newColour, )
-
-
-
-
-		//New letter = finished bitmap
-	}
+	
 }

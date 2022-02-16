@@ -1,0 +1,92 @@
+﻿foreach (letterPixels pxs in pxToCheck)
+						{
+							//Check Left
+							if (CheckBlack(input_Image.GetPixel(x - 1, y)))
+							{
+								pxs.l.px = Color.FromArgb(255, 255, 255);
+								pxs.l.origin = "r";
+								pxToCheck.AddLast(pxs.l);
+							}
+
+							//Check Right
+							if (CheckBlack(input_Image.GetPixel(x - 1, y)))
+							{
+								pxs.r.px = Color.FromArgb(255, 255, 255);
+								pxs.r.origin = "l";
+								pxToCheck.AddLast(pxs.r);
+							}
+
+							//Check Up
+							if (CheckBlack(input_Image.GetPixel(x - 1, y)))
+							{
+								pxs.u.px = Color.FromArgb(255, 255, 255);
+								pxs.u.origin = "d";
+								pxToCheck.AddLast(pxs.d);
+							}
+
+							//Check Down
+							if (CheckBlack(input_Image.GetPixel(x - 1, y)))
+							{
+								pxs.d.px = Color.FromArgb(255, 255, 255);
+								pxs.d.origin = "u";
+								pxToCheck.AddLast(pxs.u);
+							}
+
+						}
+
+
+
+pxs.l.px = Color.FromArgb(0, 0, 0);
+								pxs.l.origin = "r";
+
+
+if (write.l.px != null)
+							{
+								if (write.l.px != empty)
+								{
+									newLetter.SetPixel(write.x - 1, write.y, black);
+									write.l.px = empty;
+									write.l.x = write.x - 1;
+									write.l.y = write.y;
+									nextPx.AddLast(write.l);
+								}
+							}
+
+							//Check Right
+							if (write.r.px != null)
+							{
+								if (write.r.px != empty)
+								{
+									newLetter.SetPixel(write.x + 1, write.y, black);
+									write.r.px = empty;
+									write.r.x = write.x + 1;
+									write.r.y = write.y;
+									nextPx.AddLast(write.r);
+								}
+							}
+
+							//Check Up
+							if (write.u.px != null)
+							{
+								if (write.u.px != empty)
+								{
+									newLetter.SetPixel(write.x, write.y + 1, black);
+									write.u.px = empty;
+									write.u.x = write.x;
+									write.u.x = write.y + 1;
+									nextPx.AddLast(write.u);
+								}
+							}
+
+							//Check Down
+							if (write.d.px != null)
+							{
+								if (write.d.px != empty)
+								{
+									newLetter.SetPixel(write.x, write.y - 1, black);
+									write.d.px = empty;
+									write.d.x = write.x;
+									write.d.y = write.y - 1;
+									nextPx.AddLast(write.d);
+								}
+							}

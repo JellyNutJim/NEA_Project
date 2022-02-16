@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace NEA_Project
 {
-	class process
+	class codeCaller
 	{
 		//Takes the given image and increase the saturation and brightness values.
 		//This will make it easier to distingush between characters on the page.

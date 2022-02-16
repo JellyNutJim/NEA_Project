@@ -62,7 +62,8 @@ namespace NEA_Project
 
 		}
 
-		//Used after changes have been made to the bitmap. Replaces all old pixel colour values with the new ones.
+		//Used after changes have been made to the bitmap.
+		//Replaces all old pixel colour values with the new ones.
 		public static Color[] SetAllPixels()
 		{
 			finalImage = new Bitmap(imageWidth, imageHeight);
@@ -107,15 +108,15 @@ namespace NEA_Project
 					pixelSaturation = 1;
 				}
 
-				if (pixelBrightness > 0.1 && pixelSaturation != 0)
+				pixelBrightness *= 2.5f;
+				if (pixelBrightness > 1)
+
 				{
-					pixelBrightness *= 2;
-					if (pixelBrightness > 1)
-					{
-						pixelBrightness = 1;
-					}
+					pixelBrightness = 1;
 				}
-				else 
+
+				
+				if (pixelBrightness < 0.7)
 				{
 					pixelBrightness = 0;
 				}
