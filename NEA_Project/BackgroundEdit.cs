@@ -44,7 +44,7 @@ namespace NEA_Project
 			}
 		}
 
-		//Returns every pixel within a bitmap,. stores values in an array called pixels then returns it.
+		//Returns every pixel within a bitmap, stores values in an array called pixels then returns it.
 		public static Color[] GetAllPixels()
 		{
 			pixels = new Color[imageArea];
@@ -100,7 +100,7 @@ namespace NEA_Project
 				//Console.WriteLine("sat: " + pixelSaturation);
 				//Console.WriteLine("bri: " + pixelBrightness);
 
-
+				//Increase saturation and brightness
 				pixelSaturation *= 2;
 				if (pixelSaturation > 1)
 				{
@@ -115,18 +115,19 @@ namespace NEA_Project
 						pixelBrightness = 1;
 					}
 				}
-				else
+				else 
 				{
 					pixelBrightness = 0;
 				}
 
-				pixels[i] = HSL2RGB(pixelHue, pixelSaturation, pixelBrightness);
+				//Re-define the pixel as a RBG colour.
+				pixels[i] = HSB2RGB(pixelHue, pixelSaturation, pixelBrightness);
 				 
-
 			}
 		}
 
-	public static Color HSL2RGB(double h, double sl, double l)
+		//Convert HSB to RBG.
+		public static Color HSB2RGB(double h, double sl, double l)
 		{
 			double v;
 			double r, g, b;
@@ -187,10 +188,8 @@ namespace NEA_Project
 				}
 			}
 			
-
 			return Color.FromArgb(255, (int)Convert.ToByte(r * 255.0f), (int)Convert.ToByte(r * 255.0f), (int)Convert.ToByte(b * 255.0f));
 
 		} 
-
 	}
 }

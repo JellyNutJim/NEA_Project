@@ -9,3 +9,14 @@ C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NE
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.login_page.resources
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csprojAssemblyReference.cache
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.Main_Page.resources
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\bin\Debug\NEA_Project.exe.config
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\bin\Debug\NEA_Project.exe
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\bin\Debug\NEA_Project.pdb
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csprojAssemblyReference.cache
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.login_page.resources
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.Main_Page.resources
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.Properties.Resources.resources
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.GenerateResource.cache
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.CoreCompileInputs.cache
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.exe
+C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.pdb

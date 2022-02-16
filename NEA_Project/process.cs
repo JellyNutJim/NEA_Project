@@ -13,6 +13,9 @@ namespace NEA_Project
 {
 	class process
 	{
+		//Takes the given image and increase the saturation and brightness values.
+		//This will make it easier to distingush between characters on the page.
+		//Therefore making it easier to seperate characters and sentances from the page before interpreting them.
 		public static void RemoveBG(Bitmap input_Image)
 		{
 			BackgroundEdit.InputImage = input_Image;
@@ -22,6 +25,7 @@ namespace NEA_Project
 
 			
 		}
+
 
 
 	}
