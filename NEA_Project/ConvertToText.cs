@@ -30,7 +30,6 @@ namespace NEA_Project
 	{
 		//The color of this pixel. --------------------------------------------- should probably delete?????
 		public Color px;
-		public string origin;
 
 		//Represents the pixels surrounding this pixel.
 		public letterPixels l, r, u, d;
@@ -39,10 +38,9 @@ namespace NEA_Project
 		public int x;
 		public int y;
 
-		public letterPixels(Color input_Colour, string origin, int x, int y)
+		public letterPixels(Color input_Colour, int x, int y)
 		{
 			this.px = input_Colour;
-			this.origin = origin;
 			this.x = x;
 			this.y = y;
 		}
@@ -75,7 +73,9 @@ namespace NEA_Project
 			//Start and end Y coordinates of the letter.
 			//Can be used to calculate height of the letter.
 			int endY;
+			int endX;
 			int startY;
+			int startX;
 
 			//Search along x, then y
 			for (int y = 0; y < input_Image_Height; y++)
@@ -91,8 +91,11 @@ namespace NEA_Project
 						//Check all 8 possible pixels arround it, then check those.
 						//Build up a grid of the letter.
 						int pixelsInLetter = 0;
-						int letterLength = 0;
-						endY = 1;
+
+						startX = x;
+						endX = x;
+						startY = y;
+						endY = y;
 
 						//Console.WriteLine("X: " + x);
 						//Console.WriteLine("Y: " + y);
@@ -100,9 +103,8 @@ namespace NEA_Project
 						//Define the first letterPixels object, and set its x and y to the first black pixels location.
 						//This object will be redfined over time, so we save this first letterPixel to  to variable initialOrigin.
 						//Therefore we can store the original coordinates of the pixel for later use.
-						letterPixels px = new letterPixels(pixel, "o", x, y);
+						letterPixels px = new letterPixels(pixel, x, y);
 						letterPixels initialOrigin = px;
-						startY = initialOrigin.x;
 
 						//After checking and creating a new obeject to represent a pixel I set the pixel colour to white.
 						//Doing this esentially tells the program that this pixel has already been checked, and should not be re-checked.
@@ -127,13 +129,20 @@ namespace NEA_Project
 								//Console.WriteLine("l");
 								
 								//If a new lowest y is detected, save the value to lowestY.
-								if (pxs.y > lowestY)
+								if (pxs.x < startX)
 								{
-									lowestY = pxs.y;
-									letterLength++;
+									startX = pxs.x;
 								}
+
+								if (pxs.x > endX)
+								{
+									endX = pxs.x;
+								}
+
+
+
 								///Defines the object to the left of pxs.
-								pxs.l = new letterPixels(Color.FromArgb(0, 0, 0), "r", pxs.x - 1, pxs.y);
+								pxs.l = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x - 1, pxs.y);
 
 								//Add this new object to the linked list of objects to check.
 								letterPixels tempLP = pxs.l;
@@ -152,13 +161,17 @@ namespace NEA_Project
 								pixelsInLetter += 1;
 								//Console.WriteLine("r");
 
-								if (pxs.y > lowestY)
+								if (pxs.x < startX)
 								{
-									lowestY = pxs.y;
-									letterLength++;
+									startX = pxs.x;
 								}
 
-								pxs.r = new letterPixels(Color.FromArgb(0, 0, 0), "l", pxs.x + 1, pxs.y);
+								if (pxs.x > endX)
+								{
+									endX = pxs.x;
+								}
+
+								pxs.r = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x + 1, pxs.y);
 								letterPixels tempLP = pxs.r; 
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x + 1, pxs.y, Color.FromArgb(255, 255, 255));
@@ -170,13 +183,17 @@ namespace NEA_Project
 								pixelsInLetter += 1;
 								//Console.WriteLine("u");
 
-								if (pxs.y > lowestY)
+								if (pxs.y < startY)
 								{
-									lowestY = pxs.y;
-									letterLength++;
+									startY = pxs.y;
 								}
 
-								pxs.u = new letterPixels(Color.FromArgb(0, 0, 0), "d", pxs.x, pxs.y - 1);
+								if (pxs.y > endY)
+								{
+									endY = pxs.y;
+								}
+
+								pxs.u = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x, pxs.y - 1);
 								letterPixels tempLP = pxs.u;
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x, pxs.y - 1, Color.FromArgb(255, 255, 255));
@@ -188,13 +205,17 @@ namespace NEA_Project
 								pixelsInLetter += 1;
 								//Console.WriteLine("d");
 
-								if (pxs.y > lowestY)
+								if (pxs.y < startY)
 								{
-									lowestY = pxs.y;
-									letterLength++;
+									startY = pxs.y;
 								}
 
-								pxs.d = new letterPixels(Color.FromArgb(0, 0, 0), "u", pxs.x, pxs.y + 1);
+								if (pxs.y > endY)
+								{
+									endY = pxs.y;
+								}
+
+								pxs.d = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x, pxs.y + 1);
 								letterPixels tempLP = pxs.d;
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x, pxs.y + 1, Color.FromArgb(255, 255, 255));
@@ -204,16 +225,25 @@ namespace NEA_Project
 						}
 
 						//Reconstruct letter from objects
-						letterLength *= 2; //Set to endY - Start Y ----------------------------------------------------------------------------
+						//Set to endY - Start Y ----------------------------------------------------------------------------
 
 						//Create a new bitmap for the letter.
-						Bitmap newLetter = new Bitmap(letterLength * 2, letterLength * 2);
-						int startX = letterLength / 2;
-						int startY = letterLength / 2;
+
+						//find width and height
+						int letterWidth = endX - startX;
+						int newX = x - startX;
+
+						int letterHeight = endY - startY;
+						int newY = y - startY;
+
+						Bitmap newLetter = new Bitmap(letterWidth, letterHeight);
 
 						//Set the postion of the first pixel to be drawn.
-						initialOrigin.x = startX;
-						initialOrigin.y = startY;
+						initialOrigin.x = newX;
+						initialOrigin.y = newY;
+						
+						Console.WriteLine("StartX: " + newX + " StartY: " + newY);
+						Console.WriteLine("LetterH: " + letterHeight + " letterW: " + letterWidth);
 
 						//Define colours.
 						Color black = Color.FromArgb(255, 0, 0, 0);
@@ -225,7 +255,7 @@ namespace NEA_Project
 						//Create new linked list that will run through all existing letterPixel objects for this letter.
 						LinkedList<letterPixels> nextPx = new LinkedList<letterPixels>();
 						nextPx.AddLast(initialOrigin);
-
+						
 						while (nextPx.First != null)
 						{
 							letterPixels write = nextPx.First.Value; //Change variable name ---------------------------------------------------
@@ -288,10 +318,10 @@ namespace NEA_Project
 								}
 							}
 							nextPx.RemoveFirst();
-						}
+						} 
 
 						letters.AddLast(newLetter);
-					}
+					} 
 				}
 			}
 		}
