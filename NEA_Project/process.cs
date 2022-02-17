@@ -22,11 +22,7 @@ namespace NEA_Project
 			BackgroundEdit.GetAllPixels();
 			BackgroundEdit.HSBPixels();
 			BackgroundEdit.SetAllPixels();
-
 			
 		}
-
-
-
 	}
 }

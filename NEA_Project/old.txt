@@ -90,3 +90,43 @@ if (write.l.px != null)
 									nextPx.AddLast(write.d);
 								}
 							}
+
+
+
+							//Color[] pixels = BackgroundEdit.GetAllPixels(input_image);
+
+			for (int y = 0; y < input_image.Height; y++)
+			{
+				for (int x = 0; x < input_image.Width; x++, i++)
+				{
+					if (CheckBlack(pixels[x, y]))
+					{
+						//Check all 8 possible pixels arround it, then check those.
+						//Build up a grid of the letter.
+
+
+
+					}
+				}
+			}
+
+
+			foreach (Color pixel in pixels)
+			{
+				//If the pixel is black
+				if (CheckBlack(pixel))
+				{
+
+				}
+			}
+
+		}
+
+		public static void CheckBlack(Color pixel)
+		{
+			if (pixel.GetBrightness < 0.1)
+			{
+				return true;
+			}
+			return false;
+		}*/
