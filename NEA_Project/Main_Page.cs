@@ -113,7 +113,8 @@ namespace NEA_Project
 		//If it has already been called then it will set the Input_Img_Display to that image.
 		private void Convert_To_Text_Btn_Click(object sender, EventArgs e)
 		{
-			//If removed bg exists
+			//If an image with a removed background is already loaded into the result_image_Display,
+			//then that same image can just be used.
 			if (Result_Img_Display.Image != null)
 			{
 				Console.WriteLine("Ghewe");
@@ -134,12 +135,11 @@ namespace NEA_Project
 
 					//Splits image into chracters.
 					convert();
-
-
 				}
 				else
 				{
 					//Display error to user.
+					//Occurs when no image is present in either the result or input picture box.
 					Image_Error_Display.BringToFront();
 					Image_Error_Display.Text = "Please enter an image first";
 				}
@@ -178,6 +178,7 @@ namespace NEA_Project
 
 			Bitmap temp = newLetter.letters.Last.Value;
 
+			//temp for testing, if color not background, draw black.
 			for (int y = 0; y < temp.Height; y++)
 			{
 				for (int x = 0; x < temp.Width; x++)
@@ -189,7 +190,7 @@ namespace NEA_Project
 				}
 			}
 
-					Input_Img_Display.Image = newLetter.letters.Last.Value;
+			Input_Img_Display.Image = newLetter.letters.Last.Value;
 		}
 	}
 }
