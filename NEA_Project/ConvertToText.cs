@@ -122,6 +122,16 @@ namespace NEA_Project
 							//Gets the first object from the linked list.
 							letterPixels pxs = pxToCheck.First.Value;
 
+							if (pxs.x < startX)
+							{
+								startX = pxs.x;
+							}
+
+							if (pxs.y < startY)
+							{
+								startY = pxs.y;
+							}
+
 							//Checks the left pixel of the current object.
 							if (CheckBlack(input_Image.GetPixel(pxs.x - 1, pxs.y)))
 							{
@@ -129,17 +139,6 @@ namespace NEA_Project
 								//Console.WriteLine("l");
 								
 								//If a new lowest y is detected, save the value to lowestY.
-								if (pxs.x < startX)
-								{
-									startX = pxs.x;
-								}
-
-								if (pxs.x > endX)
-								{
-									endX = pxs.x;
-								}
-
-
 
 								///Defines the object to the left of pxs.
 								pxs.l = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x - 1, pxs.y);
@@ -161,14 +160,9 @@ namespace NEA_Project
 								pixelsInLetter += 1;
 								//Console.WriteLine("r");
 
-								if (pxs.x < startX)
+								if (pxs.x >= endX)
 								{
-									startX = pxs.x;
-								}
-
-								if (pxs.x > endX)
-								{
-									endX = pxs.x;
+									endX = pxs.x + 1;
 								}
 
 								pxs.r = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x + 1, pxs.y);
@@ -183,16 +177,6 @@ namespace NEA_Project
 								pixelsInLetter += 1;
 								//Console.WriteLine("u");
 
-								if (pxs.y < startY)
-								{
-									startY = pxs.y;
-								}
-
-								if (pxs.y > endY)
-								{
-									endY = pxs.y;
-								}
-
 								pxs.u = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x, pxs.y - 1);
 								letterPixels tempLP = pxs.u;
 								pxToCheck.AddLast(tempLP);
@@ -205,14 +189,9 @@ namespace NEA_Project
 								pixelsInLetter += 1;
 								//Console.WriteLine("d");
 
-								if (pxs.y < startY)
+								if (pxs.y >= endY)
 								{
-									startY = pxs.y;
-								}
-
-								if (pxs.y > endY)
-								{
-									endY = pxs.y;
+									endY = pxs.y + 1;
 								}
 
 								pxs.d = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x, pxs.y + 1);
@@ -230,19 +209,26 @@ namespace NEA_Project
 						//Create a new bitmap for the letter.
 
 						//find width and height
+
+
+
+
 						int letterWidth = endX - startX;
 						int newX = x - startX;
 
 						int letterHeight = endY - startY;
 						int newY = y - startY;
 
-						Bitmap newLetter = new Bitmap(letterWidth, letterHeight);
+						Bitmap newLetter = new Bitmap(letterWidth + 1, letterHeight + 1);
 
 						//Set the postion of the first pixel to be drawn.
 						initialOrigin.x = newX;
 						initialOrigin.y = newY;
-						
-						Console.WriteLine("StartX: " + newX + " StartY: " + newY);
+
+						Console.WriteLine("StartX: " + startX +  " EndX: " + endX);
+						Console.WriteLine("Start Y: " + startY + " endY: " + endY);
+						Console.WriteLine("X: " + x + " Y: " + y);
+						Console.WriteLine("newX: " + newX + " newY: " + newY);
 						Console.WriteLine("LetterH: " + letterHeight + " letterW: " + letterWidth);
 
 						//Define colours.
@@ -250,7 +236,7 @@ namespace NEA_Project
 						Color empty = Color.FromArgb(0, 0, 0, 0);
 
 						//Draw the first pixel onto the new bitmap.
-						newLetter.SetPixel(startX, startY, initialOrigin.px);
+						newLetter.SetPixel(newX, newY, initialOrigin.px);
 
 						//Create new linked list that will run through all existing letterPixel objects for this letter.
 						LinkedList<letterPixels> nextPx = new LinkedList<letterPixels>();
