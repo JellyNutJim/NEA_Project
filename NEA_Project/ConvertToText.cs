@@ -77,11 +77,16 @@ namespace NEA_Project
 			int startY;
 			int startX;
 
+			//Variable used to check when a new line of text has been found.
+			int checkY = 0;
+
 			//Search along x, then y
 			for (int y = 0; y < input_Image_Height; y++)
 			{
+
 				for (int x = 0; x < input_Image_Width; x++)
 				{
+
 					//Gets the color of a pixel at postion (x, y);
 					Color pixel = input_Image.GetPixel(x, y);
 
@@ -92,6 +97,7 @@ namespace NEA_Project
 						//Build up a grid of the letter.
 						int pixelsInLetter = 0;
 
+						//Define the start and end x,y values of the box that the letter exists within.
 						startX = x;
 						endX = x;
 						startY = y;
@@ -122,11 +128,14 @@ namespace NEA_Project
 							//Gets the first object from the linked list.
 							letterPixels pxs = pxToCheck.First.Value;
 
+							//If the current letterPixels x coordinate is behind the current startX value.
+							//Set startX to the current X.
 							if (pxs.x < startX)
 							{
 								startX = pxs.x;
 							}
 
+							//Does the same, but For the Y corrdinate.
 							if (pxs.y < startY)
 							{
 								startY = pxs.y;
@@ -137,8 +146,6 @@ namespace NEA_Project
 							{
 								pixelsInLetter++;
 								//Console.WriteLine("l");
-								
-								//If a new lowest y is detected, save the value to lowestY.
 
 								///Defines the object to the left of pxs.
 								pxs.l = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x - 1, pxs.y);
@@ -203,28 +210,30 @@ namespace NEA_Project
 							pxToCheck.RemoveFirst();
 						}
 
-						//Reconstruct letter from objects
-						//Set to endY - Start Y ----------------------------------------------------------------------------
+						if (pixelsInLetter < 20)
+						{
+							break;
+						}
 
-						//Create a new bitmap for the letter.
+						//Reconstruct the letter using the newly created objects.
 
-						//find width and height
-
-
-
-
+						//Use start and end x/y values to create a new bitmap that exactly fits the given letter.
+						//Also define newx/y values which determine the posistion of the first pixel to be drawn.
 						int letterWidth = endX - startX;
 						int newX = x - startX;
 
 						int letterHeight = endY - startY;
 						int newY = y - startY;
 
+						//Creates thep bitmap for the new letter.
+						//We add one to both letterWidth and letterHeight as the  
 						Bitmap newLetter = new Bitmap(letterWidth + 1, letterHeight + 1);
 
 						//Set the postion of the first pixel to be drawn.
 						initialOrigin.x = newX;
 						initialOrigin.y = newY;
 
+						//Testing writelines.
 						Console.WriteLine("StartX: " + startX +  " EndX: " + endX);
 						Console.WriteLine("Start Y: " + startY + " endY: " + endY);
 						Console.WriteLine("X: " + x + " Y: " + y);
@@ -304,7 +313,14 @@ namespace NEA_Project
 								}
 							}
 							nextPx.RemoveFirst();
-						} 
+						}
+
+						//If y has been iterated
+						if (y > checkY)
+						{
+							y += Convert.ToInt32(letterHeight * 0.6);
+							checkY = y;
+						}
 
 						letters.AddLast(newLetter);
 					} 
@@ -313,7 +329,7 @@ namespace NEA_Project
 		}
 
 		//Returns true if a pixel is black (has a brightness of less than 0.2)
-		//Normally this would not necerseraly return true only on black colors, but there are only black and white colors present on the new page,------------- spell check
+		//Normally this would not necessarily return true for only black colors, but as there are only black and white colors present on the new page this is not a problem.
 		public bool CheckBlack(Color pixel)
 		{
 			if (pixel.GetBrightness() <= 0.2)

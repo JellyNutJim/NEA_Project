@@ -150,7 +150,7 @@ namespace NEA_Project
 		{
 			Bitmap image = new Bitmap(Input_Img_Display.Image);
 			createLetter newLetter = new createLetter(image);
-			/*int width = 0;
+			int width = 0;
 			int height = 0;
 			int length = 0;
 
@@ -174,9 +174,9 @@ namespace NEA_Project
 					start += temp.First.Value.Width;
 					temp.RemoveFirst();
 				}
-			}*/
+			}
 
-			Bitmap temp = newLetter.letters.Last.Value;
+			/*Bitmap temp = newLetter.letters.Last.Value;
 
 			//temp for testing, if color not background, draw black.
 			for (int y = 0; y < temp.Height; y++)
@@ -188,9 +188,10 @@ namespace NEA_Project
 						temp.SetPixel(x, y, Color.FromArgb(255, 40, 32, 69));
 					}
 				}
-			}
+			}*/
 
-			Input_Img_Display.Image = newLetter.letters.Last.Value;
+			//Input_Img_Display.Image = newLetter.letters.Last.Value;
+			Input_Img_Display.Image = allLetters;
 		}
 	}
 }
