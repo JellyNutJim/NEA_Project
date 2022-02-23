@@ -73,7 +73,7 @@ namespace NEA_Project
             OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Persist Security Info=False;DataSource='/bin/Debug/User_Data.mdb';");
 
             OleDbCommand cmd = connection.CreateCommand();
-            connection.Open();
+            //connection.Open();
 
             //Creates the regex strings, as well as creates an intial error variable.
             bool containsError = false;
@@ -141,7 +141,7 @@ namespace NEA_Project
             //Checks if any errors have occured and displays the appropriate error message to the user.
             if (containsError)
             {
-                Errorlog.Text = errors;
+                MessageBox.Show($"Errors found: \n{errors}");
             }
 			else
 			{
@@ -150,12 +150,12 @@ namespace NEA_Project
                 //Check against stuff
 
                 //Now the name and password has been cleared for use it can be added to the database and an account can be created.
-                connection.Open();
+                /*connection.Open();
                 cmd.CommandText = $"INSERT INTO User_Data (UserID, UserName, UserPassword) VALUES('temp', '{requestedUserName}', '{requestedUserName}');";
                 cmd.Connection = connection;
 
                 cmd.ExecuteNonQuery();
-                connection.Close();
+                connection.Close();*/
             }
         }
 
