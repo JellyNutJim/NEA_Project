@@ -19,4 +19,4 @@ C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.cs
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.CoreCompileInputs.cache
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.exe
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.pdb
-C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.AssemblyReference.cache
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csprojAssemblyReference.cache

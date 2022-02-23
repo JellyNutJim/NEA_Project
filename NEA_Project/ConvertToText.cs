@@ -210,10 +210,13 @@ namespace NEA_Project
 							pxToCheck.RemoveFirst();
 						}
 
-						if (pixelsInLetter < 20)
+                        //Remove small defects.
+						if (pixelsInLetter < 5)
 						{
 							break;
 						}
+
+                        ////////////////----------------------------------------------------- add correct order detecting
 
 						//Reconstruct the letter using the newly created objects.
 

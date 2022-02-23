@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,9 @@ namespace NEA_Project
 {
 	public partial class Main_Page : Form
 	{
-		public Main_Page()
+        public LinkedList<Bitmap> letters;
+
+        public Main_Page()
 		{
 			InitializeComponent();
 
@@ -56,34 +59,10 @@ namespace NEA_Project
 			}
 		}
 
-		private void pictureBox1_Click(object sender, EventArgs e)
-		{
-			
-		}
+        // The following code relates to button on click functions ------------------------------------------------------------------------------------------------------------
 
-		private void label1_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void label2_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void label2_Click_1(object sender, EventArgs e)
-		{
-
-		}
-
-		private void Result_Img_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		//Called when the remove background button is selected.
-		//	
-		private void Remove_BG_Btn_Click(object sender, EventArgs e)
+        //Called when the remove background button is selected.
+        private void Remove_BG_Btn_Click(object sender, EventArgs e)
 		{
 			Console.WriteLine("Remove bg triggered");
 
@@ -108,90 +87,191 @@ namespace NEA_Project
 			Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
 		}
 
-		//Called when the Convert to text button is clicked.
-		//Firstly, if the background has not already been removed, it will remove the background.
-		//If it has already been called then it will set the Input_Img_Display to that image.
-		private void Convert_To_Text_Btn_Click(object sender, EventArgs e)
+        //Called when the split letters button is selected.
+        private void Split_Lettersw_Btn_Click(object sender, EventArgs e)
+        {
+            createLetter tempLetters = split();
+            if (tempLetters != null)
+            {
+                int width = 0;
+                int height = 0;
+                int length = 0;
+
+                foreach (Bitmap letter in tempLetters.letters)
+                {
+                    length++;
+                    width += letter.Width;
+                    height += letter.Height;
+                }
+
+                Bitmap allLetters = new Bitmap(width, height);
+                letters = tempLetters.letters;
+                LinkedList<Bitmap> drawletters = letters;
+
+
+                //Draw the new letters into the result picturebox.
+                int start = 0;
+                using (Graphics g = Graphics.FromImage(allLetters))
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        g.DrawImage((Image)(drawletters.First.Value), start, 0);
+                        start += drawletters.First.Value.Width;
+                        drawletters.RemoveFirst();
+                    }
+                }
+
+                Result_Img_Display.Image = allLetters;
+                Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
+            }
+        }
+
+        //Called when the Convert to text button is selected.
+        //Firstly, if the background has not already been removed, it will remove the background.
+        //If it has already been called then it will set the Input_Img_Display to that image.
+        private void Convert_To_Text_Btn_Click(object sender, EventArgs e)
 		{
-			//If an image with a removed background is already loaded into the result_image_Display,
-			//then that same image can just be used.
-			if (Result_Img_Display.Image != null)
-			{
-				Console.WriteLine("Ghewe");
-				Input_Img_Display.Image = Result_Img_Display.Image;
-				Result_Img_Display.Image = null;
-				convert();
-			}
-			else 
-			{
-				//An image with a removed background is not present
-				if (Input_Img_Display.Image != null)
-				{
-					Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
-					codeCaller.RemoveBG(bitmappedImage);
-
-					//Sets the Input_Img_Display to the image with a removed background.
-					Input_Img_Display.Image = (Image)(BackgroundEdit.finalImage);
-
-					//Splits image into chracters.
-					convert();
-				}
-				else
-				{
-					//Display error to user.
-					//Occurs when no image is present in either the result or input picture box.
-					Image_Error_Display.BringToFront();
-					Image_Error_Display.Text = "Please enter an image first";
-				}
-			}
+            split();
 		}
 
-		private void convert()
-		{
-			Bitmap image = new Bitmap(Input_Img_Display.Image);
-			createLetter newLetter = new createLetter(image);
-			int width = 0;
-			int height = 0;
-			int length = 0;
+        //Called when the download button is selected.
+        //Firstly,  the option of
+        private void Download_Btn_Click(object sender, EventArgs e)
+        {
+            string selectedDownloadOption = Select_Download_Type_CB.Text;
 
-			foreach (Bitmap letter in newLetter.letters)
-			{
-				length++;
-				width += letter.Width;
-				height += letter.Height;
-			}
+            switch (selectedDownloadOption)
+            {
+                case "Single Image":
+                    if (Result_Img_Display.Image != null)
+                    {
+                        FolderBrowserDialog getFolderLocation = new FolderBrowserDialog();
 
-			Bitmap allLetters = new Bitmap(width, height);
-			LinkedList<Bitmap> temp = newLetter.letters;
+                        if (getFolderLocation.ShowDialog() == DialogResult.OK)
+                        {
+                            string folderLocation = getFolderLocation.SelectedPath;
+                            Result_Img_Display.Image.Save(folderLocation + @"\Download.png");
+                        }        
+                    }
+                    else
+                    {
+                        MessageBox.Show("There must be an image to download.");
+                    }
+                    break;
+                case "Multiple Images":
+                    if (letters.First != null)
+                    {
+                        FolderBrowserDialog getFolderLocation = new FolderBrowserDialog();
 
-			int start = 0;
+                        if (getFolderLocation.ShowDialog() == DialogResult.OK)
+                        {
+                            string folderLocation = getFolderLocation.SelectedPath;
+                            int num = 1;
+                            foreach (Bitmap letter in letters)
+                            {
+                                letter.Save(folderLocation + $@"\letter{num}.png");
+                                num++;
+                            }
+                        }
 
-			using (Graphics g = Graphics.FromImage(allLetters))
-			{
-				for (int i = 0; i < length; i++)
-				{
-					g.DrawImage((Image)(temp.First.Value), start, 0);
-					start += temp.First.Value.Width;
-					temp.RemoveFirst();
-				}
-			}
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please use the split letters function first.");
+                    }
 
-			/*Bitmap temp = newLetter.letters.Last.Value;
 
-			//temp for testing, if color not background, draw black.
-			for (int y = 0; y < temp.Height; y++)
-			{
-				for (int x = 0; x < temp.Width; x++)
-				{
-					if (temp.GetPixel(x, y) != Color.FromArgb(255, 0, 0, 0))
-					{
-						temp.SetPixel(x, y, Color.FromArgb(255, 40, 32, 69));
-					}
-				}
-			}*/
 
-			//Input_Img_Display.Image = newLetter.letters.Last.Value;
-			Input_Img_Display.Image = allLetters;
-		}
-	}
+                    break;
+                case "Text File":
+                    break;
+                default:
+                    MessageBox.Show("Please select a download option");
+                    break;
+            }
+
+        }
+
+        // The following code contains functions that will be made use of multiple times by various button interactions. --------------------------------------------
+
+        private createLetter split()
+        {
+            if (Result_Img_Display.Image != null)
+            {
+                Input_Img_Display.Image = Result_Img_Display.Image;
+                Result_Img_Display.Image = null;
+
+                Bitmap image = new Bitmap(Input_Img_Display.Image);
+                createLetter newLetter = new createLetter(image);
+                return newLetter;
+            }
+            else
+            {
+                //An image with a removed background is not present
+                if (Input_Img_Display.Image != null)
+                {
+                    Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
+                    codeCaller.RemoveBG(bitmappedImage);
+
+                    //Sets the Input_Img_Display to the image with a removed background.
+                    Input_Img_Display.Image = (Image)(BackgroundEdit.finalImage);
+
+                    //Splits image into chracters.
+                    Bitmap image = new Bitmap(Input_Img_Display.Image);
+                    createLetter newLetter = new createLetter(image);
+                    return newLetter;
+                }
+                else
+                {
+                    //Display error to user.
+                    //Occurs when no image is present in either the result or input picture box.
+                    Image_Error_Display.BringToFront();
+                    Image_Error_Display.Text = "Please enter an image first";
+                }
+            }
+
+            return null;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Result_Img_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Save_To_DB_Btn_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }
