@@ -11,12 +11,15 @@ namespace NEA_Project
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        public static login_page formInstance;
+
         [STAThread]
-        static void Main()
+
+        public static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new login_page());
+            Application.Run(formInstance = new login_page());
         }
     }
 }

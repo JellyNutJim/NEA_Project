@@ -17,6 +17,7 @@ namespace NEA_Project
 	{
 		public static Bitmap inputImage;
 		public static Bitmap finalImage;
+		public static ProgressBar loadingBar;
 		public static int imageHeight;
 		public static int imageWidth;
 		public static int imageArea;
@@ -55,6 +56,7 @@ namespace NEA_Project
 				for (int x = 0; x < imageWidth; x++, i++)
 				{
 					pixels[i] = inputImage.GetPixel(x, y);
+					loadingBar.Increment(1);
 				}
 			}
 
@@ -75,6 +77,7 @@ namespace NEA_Project
 				for (int x = 0; x < imageWidth; x++, i++)
 				{
 					finalImage.SetPixel(x, y, pixels[i]);
+					loadingBar.Increment(1);
 				}
 			}
 
@@ -123,7 +126,7 @@ namespace NEA_Project
 
 				//Re-define the pixel as a RBG colour.
 				pixels[i] = HSB2RGB(pixelHue, pixelSaturation, pixelBrightness);
-				 
+				loadingBar.Increment(1);
 			}
 		}
 

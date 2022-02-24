@@ -159,7 +159,7 @@ namespace NEA_Project
             this.Split_Letters_Btn.TabIndex = 10;
             this.Split_Letters_Btn.Text = "Submit";
             this.Split_Letters_Btn.UseVisualStyleBackColor = true;
-            this.Split_Letters_Btn.Click += new System.EventHandler(this.Split_Lettersw_Btn_Click);
+            this.Split_Letters_Btn.Click += new System.EventHandler(this.Split_Letters_Btn_Click);
             // 
             // Download_Label
             // 

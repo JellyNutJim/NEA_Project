@@ -18,7 +18,6 @@ namespace NEA_Project
         public Main_Page()
 		{
 			InitializeComponent();
-
 			//Allows files to be dropped into the input picture box.
 			Input_Img_Display.AllowDrop = true;
 		}
@@ -61,10 +60,15 @@ namespace NEA_Project
 
         // The following code relates to button on click functions ------------------------------------------------------------------------------------------------------------
 
+        public static void increment_Loading_Bar()
+        {
+           
+        }
+
         //Called when the remove background button is selected.
         private void Remove_BG_Btn_Click(object sender, EventArgs e)
 		{
-			Console.WriteLine("Remove bg triggered");
+			//Console.WriteLine("Remove bg triggered");
 
 			//Checks whether an image is actually present within the input_Img_Display picturebox.
 			//If there is, call the removeBG with the image.
@@ -72,7 +76,13 @@ namespace NEA_Project
 			if (Input_Img_Display.Image != null)
 			{
 				Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
-				codeCaller.RemoveBG(bitmappedImage);
+
+                int stepsToComplete = (bitmappedImage.Height * bitmappedImage.Width) * 3;
+                Loading_Bar.Maximum = stepsToComplete;
+                Loading_Bar.Style = ProgressBarStyle.Continuous;
+                Loading_Bar.Value = 0;
+
+				codeCaller.RemoveBG(bitmappedImage, Loading_Bar);
 			}
 			else
 			{
@@ -88,7 +98,7 @@ namespace NEA_Project
 		}
 
         //Called when the split letters button is selected.
-        private void Split_Lettersw_Btn_Click(object sender, EventArgs e)
+        private void Split_Letters_Btn_Click(object sender, EventArgs e)
         {
             createLetter tempLetters = split();
             if (tempLetters != null)
@@ -150,7 +160,15 @@ namespace NEA_Project
                         if (getFolderLocation.ShowDialog() == DialogResult.OK)
                         {
                             string folderLocation = getFolderLocation.SelectedPath;
-                            Result_Img_Display.Image.Save(folderLocation + @"\Download.png");
+                            try
+                            {
+                                Result_Img_Display.Image.Save(folderLocation + @"\Download.png");
+                                MessageBox.Show("Download Successful");
+                            }
+                            catch
+                            {
+                                MessageBox.Show("Download Failed");
+                            }
                         }        
                     }
                     else
@@ -158,6 +176,7 @@ namespace NEA_Project
                         MessageBox.Show("There must be an image to download.");
                     }
                     break;
+
                 case "Multiple Images":
                     if (letters.First != null)
                     {
@@ -167,13 +186,20 @@ namespace NEA_Project
                         {
                             string folderLocation = getFolderLocation.SelectedPath;
                             int num = 1;
-                            foreach (Bitmap letter in letters)
+                            try
                             {
-                                letter.Save(folderLocation + $@"\letter{num}.png");
-                                num++;
+                                foreach (Bitmap letter in letters)
+                                {
+                                    letter.Save(folderLocation + $@"\letter{num}.png");
+                                    num++;
+                                }
+                                MessageBox.Show("Download Successful");
+                            }
+                            catch
+                            {
+                                MessageBox.Show("Download Failed");
                             }
                         }
-
                     }
                     else
                     {
@@ -211,7 +237,7 @@ namespace NEA_Project
                 if (Input_Img_Display.Image != null)
                 {
                     Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
-                    codeCaller.RemoveBG(bitmappedImage);
+                    codeCaller.RemoveBG(bitmappedImage, Loading_Bar);
 
                     //Sets the Input_Img_Display to the image with a removed background.
                     Input_Img_Display.Image = (Image)(BackgroundEdit.finalImage);

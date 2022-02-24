@@ -16,9 +16,10 @@ namespace NEA_Project
 		//Takes the given image and increase the saturation and brightness values.
 		//This will make it easier to distingush between characters on the page.
 		//Therefore making it easier to seperate characters and sentances from the page before interpreting them.
-		public static void RemoveBG(Bitmap input_Image)
+		public static void RemoveBG(Bitmap input_Image, ProgressBar loadingBar)
 		{
 			BackgroundEdit.InputImage = input_Image;
+			BackgroundEdit.loadingBar = loadingBar;
 			BackgroundEdit.GetAllPixels();
 			BackgroundEdit.HSBPixels();
 			BackgroundEdit.SetAllPixels();

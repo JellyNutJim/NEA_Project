@@ -33,7 +33,7 @@ namespace NEA_Project
         }
 
         //Checks if the users log in details are corrrect, and then forwards them to the main page.
-        private void button1_Click(object sender, EventArgs e)
+        public void button1_Click(object sender, EventArgs e)
         {
             this.Hide();
             Main_Page mp = new Main_Page();
