@@ -86,9 +86,10 @@ namespace NEA_Project
 
 				for (int x = 0; x < input_Image_Width; x++)
 				{
-
-					//Gets the color of a pixel at postion (x, y);
-					Color pixel = input_Image.GetPixel(x, y);
+                    //Gets the color of a pixel at postion (x, y);
+                    Console.WriteLine(y + " " + input_Image_Height);
+                    Console.WriteLine(x + " " + input_Image_Width);
+ 					Color pixel = input_Image.GetPixel(x, y);
 
 					//If the pixel is black, then a new letter has been detected.
 					if (CheckBlack(pixel) == true)
@@ -158,11 +159,11 @@ namespace NEA_Project
 								input_Image.SetPixel(pxs.x - 1, pxs.y, Color.FromArgb(255, 255, 255));
 							}
 
-							//The following check if statements function the same as check left.
-							//They are just checking different coordinates.
+                            //The following check if statements function the same as check left.
+                            //They are just checking different coordinates.
 
-							//Check Right
-							if (CheckBlack(input_Image.GetPixel(pxs.x + 1, pxs.y)))
+                            //Check Right
+                            if (CheckBlack(input_Image.GetPixel(pxs.x + 1, pxs.y)))
 							{
 								pixelsInLetter += 1;
 								//Console.WriteLine("r");
@@ -177,9 +178,10 @@ namespace NEA_Project
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x + 1, pxs.y, Color.FromArgb(255, 255, 255));
 							}
+                            
 
-							//Check Up
-							if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y - 1)))
+                            //Check Up
+                            if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y - 1)))
 							{
 								pixelsInLetter += 1;
 								//Console.WriteLine("u");
@@ -189,9 +191,10 @@ namespace NEA_Project
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x, pxs.y - 1, Color.FromArgb(255, 255, 255));
 							}
+                            
 
-							//Check Down
-							if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y + 1)))
+                            //Check Down
+                            if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y + 1)))
 							{
 								pixelsInLetter += 1;
 								//Console.WriteLine("d");
@@ -205,7 +208,20 @@ namespace NEA_Project
 								letterPixels tempLP = pxs.d;
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x, pxs.y + 1, Color.FromArgb(255, 255, 255));
-							}
+                            }
+                            /*else
+                            {
+                                for (int i = 1; i < 6; i++)
+                                {
+                                    if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y + 1 + i)))
+                                    {
+                                        pxs.d = new letterPixels(Color.FromArgb(0, 0, 0), pxs.x, pxs.y + 1 + i);
+                                        letterPixels tempLP = pxs.d;
+                                        pxToCheck.AddLast(tempLP);
+                                        input_Image.SetPixel(pxs.x, pxs.y + 1, Color.FromArgb(255, 255, 255));
+                                    }
+                                }
+                            }*/
 
 							pxToCheck.RemoveFirst();
 						}
@@ -237,11 +253,11 @@ namespace NEA_Project
 						initialOrigin.y = newY;
 
 						//Testing writelines.
-						Console.WriteLine("StartX: " + startX +  " EndX: " + endX);
-						Console.WriteLine("Start Y: " + startY + " endY: " + endY);
-						Console.WriteLine("X: " + x + " Y: " + y);
-						Console.WriteLine("newX: " + newX + " newY: " + newY);
-						Console.WriteLine("LetterH: " + letterHeight + " letterW: " + letterWidth);
+						//Console.WriteLine("StartX: " + startX +  " EndX: " + endX);
+						//Console.WriteLine("Start Y: " + startY + " endY: " + endY);
+						//Console.WriteLine("X: " + x + " Y: " + y);
+						//Console.WriteLine("newX: " + newX + " newY: " + newY);
+						//Console.WriteLine("LetterH: " + letterHeight + " letterW: " + letterWidth);
 
 						//Define colours.
 						Color black = Color.FromArgb(255, 0, 0, 0);
@@ -323,6 +339,12 @@ namespace NEA_Project
 						{
 							y += Convert.ToInt32(letterHeight * 0.6);
 							checkY = y;
+
+                            if (y > input_Image_Height)
+                            {
+                                y = input_Image_Height - 1;
+                            }
+
 						}
 
 						letters.AddLast(newLetter);

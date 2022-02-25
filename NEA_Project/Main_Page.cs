@@ -26,6 +26,7 @@ namespace NEA_Project
 		{
 			//Places the image's error display behind the 
 			Image_Error_Display.SendToBack();
+            Current_Status_Label.Visible = false;
 		}
 
 		private void Input_Img_Display_DragEnter(object sender, DragEventArgs e)
@@ -60,11 +61,6 @@ namespace NEA_Project
 
         // The following code relates to button on click functions ------------------------------------------------------------------------------------------------------------
 
-        public static void increment_Loading_Bar()
-        {
-           
-        }
-
         //Called when the remove background button is selected.
         private void Remove_BG_Btn_Click(object sender, EventArgs e)
 		{
@@ -77,12 +73,13 @@ namespace NEA_Project
 			{
 				Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
 
-                int stepsToComplete = (bitmappedImage.Height * bitmappedImage.Width) * 3;
-                Loading_Bar.Maximum = stepsToComplete;
-                Loading_Bar.Style = ProgressBarStyle.Continuous;
+                Current_Status_Label.Visible = true;
+                Current_Status_Label.Text = "Loading...";
+                Loading_Bar.Maximum = 5;
+                Loading_Bar.Style = ProgressBarStyle.Blocks;
                 Loading_Bar.Value = 0;
 
-				codeCaller.RemoveBG(bitmappedImage, Loading_Bar);
+				codeCaller.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
 			}
 			else
 			{
@@ -95,11 +92,16 @@ namespace NEA_Project
 			//picture box image equal to this value.
 			Result_Img_Display.Image = (Image)(BackgroundEdit.finalImage);
 			Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
+            Current_Status_Label.Text = "Done!";
 		}
 
         //Called when the split letters button is selected.
         private void Split_Letters_Btn_Click(object sender, EventArgs e)
         {
+            Loading_Bar.Maximum = 5;
+            Loading_Bar.Style = ProgressBarStyle.Blocks;
+            Loading_Bar.Value = 0;
+
             createLetter tempLetters = split();
             if (tempLetters != null)
             {
@@ -120,7 +122,7 @@ namespace NEA_Project
 
 
                 //Draw the new letters into the result picturebox.
-                int start = 0;
+                /*int start = 0;
                 using (Graphics g = Graphics.FromImage(allLetters))
                 {
                     for (int i = 0; i < length; i++)
@@ -129,10 +131,11 @@ namespace NEA_Project
                         start += drawletters.First.Value.Width;
                         drawletters.RemoveFirst();
                     }
-                }
+                }*/
 
                 Result_Img_Display.Image = allLetters;
                 Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
+                Current_Status_Label.Text = "Done!";
             }
         }
 
@@ -222,38 +225,25 @@ namespace NEA_Project
 
         private createLetter split()
         {
-            if (Result_Img_Display.Image != null)
+            //An image with a removed background is not present
+            if (Input_Img_Display.Image != null)
             {
-                Input_Img_Display.Image = Result_Img_Display.Image;
-                Result_Img_Display.Image = null;
+                Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
 
-                Bitmap image = new Bitmap(Input_Img_Display.Image);
+                Current_Status_Label.Visible = true;
+                codeCaller.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
+
+                //Splits image into chracters.
+                Bitmap image = new Bitmap(BackgroundEdit.finalImage);
                 createLetter newLetter = new createLetter(image);
                 return newLetter;
             }
             else
             {
-                //An image with a removed background is not present
-                if (Input_Img_Display.Image != null)
-                {
-                    Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
-                    codeCaller.RemoveBG(bitmappedImage, Loading_Bar);
-
-                    //Sets the Input_Img_Display to the image with a removed background.
-                    Input_Img_Display.Image = (Image)(BackgroundEdit.finalImage);
-
-                    //Splits image into chracters.
-                    Bitmap image = new Bitmap(Input_Img_Display.Image);
-                    createLetter newLetter = new createLetter(image);
-                    return newLetter;
-                }
-                else
-                {
-                    //Display error to user.
-                    //Occurs when no image is present in either the result or input picture box.
-                    Image_Error_Display.BringToFront();
-                    Image_Error_Display.Text = "Please enter an image first";
-                }
+                //Display error to user.
+                //Occurs when no image is present in either the result or input picture box.
+                Image_Error_Display.BringToFront();
+                Image_Error_Display.Text = "Please enter an image first";
             }
 
             return null;

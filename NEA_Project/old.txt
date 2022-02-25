@@ -130,3 +130,11 @@ if (write.l.px != null)
 			}
 			return false;
 		}*/
+
+
+CREATE TABLE [dbo].[User_Data] (
+    [User_ID]       INT NOT NULL IDENTITY,
+    [User_Name]     VARCHAR (64) NOT NULL,
+    [User_Password] VARCHAR (64) NOT NULL,
+    PRIMARY KEY CLUSTERED ([User_ID] ASC)
+);

@@ -56,7 +56,6 @@ namespace NEA_Project
 				for (int x = 0; x < imageWidth; x++, i++)
 				{
 					pixels[i] = inputImage.GetPixel(x, y);
-					loadingBar.Increment(1);
 				}
 			}
 
@@ -77,7 +76,6 @@ namespace NEA_Project
 				for (int x = 0; x < imageWidth; x++, i++)
 				{
 					finalImage.SetPixel(x, y, pixels[i]);
-					loadingBar.Increment(1);
 				}
 			}
 
@@ -111,7 +109,7 @@ namespace NEA_Project
 					pixelSaturation = 1;
 				}
 
-				pixelBrightness *= 2.5f;
+				pixelBrightness *= 2f;
 				if (pixelBrightness > 1)
 
 				{
@@ -119,14 +117,13 @@ namespace NEA_Project
 				}
 
 				
-				if (pixelBrightness < 0.7)
+				if (pixelBrightness < 0.9)
 				{
 					pixelBrightness = 0;
 				}
 
 				//Re-define the pixel as a RBG colour.
 				pixels[i] = HSB2RGB(pixelHue, pixelSaturation, pixelBrightness);
-				loadingBar.Increment(1);
 			}
 		}
 
