@@ -22,3 +22,4 @@ C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.pd
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.csproj.AssemblyReference.cache
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\bin\Debug\NEA_Data.mdf
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\bin\Debug\NEA_Data_log.ldf
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.DB_Save_Page.resources

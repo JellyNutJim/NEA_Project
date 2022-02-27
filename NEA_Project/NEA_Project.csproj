@@ -65,12 +65,19 @@
     <Compile Include="BackgroundEdit.cs" />
     <Compile Include="ConvertToText.cs" />
     <Compile Include="DBTool.cs" />
-    <Compile Include="DB_Mangement_Page.cs">
+    <Compile Include="DB_Load_Page.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DB_Mangement_Page.Designer.cs">
-      <DependentUpon>DB_Mangement_Page.cs</DependentUpon>
+    <Compile Include="DB_Load_Page.Designer.cs">
+      <DependentUpon>DB_Load_Page.cs</DependentUpon>
     </Compile>
+    <Compile Include="DB_Save_Page.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DB_Save_Page.Designer.cs">
+      <DependentUpon>DB_Save_Page.cs</DependentUpon>
+    </Compile>
+    <Compile Include="huffmanCompression.cs" />
     <Compile Include="Login_Page.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,6 +99,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentence.cs" />
+    <EmbeddedResource Include="DB_Save_Page.resx">
+      <DependentUpon>DB_Save_Page.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Login_Page.resx">
       <DependentUpon>Login_Page.cs</DependentUpon>
     </EmbeddedResource>

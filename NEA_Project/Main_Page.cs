@@ -14,13 +14,22 @@ namespace NEA_Project
 	public partial class Main_Page : Form
 	{
         public LinkedList<Bitmap> letters;
+        public int User_ID;
 
-        public Main_Page()
+        public Main_Page(int User_ID)
 		{
 			InitializeComponent();
+            this.User_ID = User_ID;
+
 			//Allows files to be dropped into the input picture box.
 			Input_Img_Display.AllowDrop = true;
-		}
+
+            //Hides the rich text box that will display any text that has been processed.
+            ML_Text_Display.SendToBack();
+            ML_Text_Display.ReadOnly = false;
+            ML_Text_Display.Text = "";
+
+        }
 
 		private void Main_Page_Load(object sender, EventArgs e)
 		{
@@ -64,7 +73,8 @@ namespace NEA_Project
         //Called when the remove background button is selected.
         private void Remove_BG_Btn_Click(object sender, EventArgs e)
 		{
-			//Console.WriteLine("Remove bg triggered");
+            ML_Text_Display.SendToBack();
+            ML_Text_Display.Text = "";
 
 			//Checks whether an image is actually present within the input_Img_Display picturebox.
 			//If there is, call the removeBG with the image.
@@ -98,6 +108,9 @@ namespace NEA_Project
         //Called when the split letters button is selected.
         private void Split_Letters_Btn_Click(object sender, EventArgs e)
         {
+            ML_Text_Display.SendToBack();
+            ML_Text_Display.Text = "";
+
             Loading_Bar.Maximum = 5;
             Loading_Bar.Style = ProgressBarStyle.Blocks;
             Loading_Bar.Value = 0;
@@ -145,19 +158,22 @@ namespace NEA_Project
         private void Convert_To_Text_Btn_Click(object sender, EventArgs e)
 		{
             split();
+            ML_Text_Display.BringToFront();
 		}
 
         //Called when the download button is selected.
-        //Firstly,  the option of
         private void Download_Btn_Click(object sender, EventArgs e)
         {
+            //Fetch the currently selected option from the combo box.
             string selectedDownloadOption = Select_Download_Type_CB.Text;
 
             switch (selectedDownloadOption)
             {
                 case "Single Image":
+                    //Firsly, check whether there is an image to download present.
                     if (Result_Img_Display.Image != null)
                     {
+                        //Open up a folder viewer so the user can choose where to save their file.
                         FolderBrowserDialog getFolderLocation = new FolderBrowserDialog();
 
                         if (getFolderLocation.ShowDialog() == DialogResult.OK)
@@ -209,8 +225,6 @@ namespace NEA_Project
                         MessageBox.Show("Please use the split letters function first.");
                     }
 
-
-
                     break;
                 case "Text File":
                     break;
@@ -218,7 +232,36 @@ namespace NEA_Project
                     MessageBox.Show("Please select a download option");
                     break;
             }
+        }
 
+        //Called when the user tries to save a file to the database.
+        private void Save_To_DB_Btn_Click(object sender, EventArgs e)
+        {
+            //Firstly, we need to check if the user is trying to save a text file, or an image file.
+            //We do this by checking if the ML_Text_Display text box has any text present.
+
+            if (ML_Text_Display.Text != "")
+            {
+                //We now know that the user is trying to save a text file.
+                //And can therefore open up the database same menu.
+                DB_Save_Page dbs = new DB_Save_Page(ML_Text_Display.Text, User_ID);
+                dbs.Show();
+            }
+            else if (Result_Img_Display.Image != null)
+			{
+                //If the user is not saving text, we check is they're trying to save an image.
+                DB_Save_Page dbs = new DB_Save_Page(Result_Img_Display.Image, User_ID);
+                dbs.Show();
+			}
+			else
+			{
+                MessageBox.Show("There is nothing to save");
+			}
+        }
+
+        private void Load_From_DB_Btn_Click(object sender, EventArgs e)
+        {
+            
         }
 
         // The following code contains functions that will be made use of multiple times by various button interactions. --------------------------------------------
@@ -284,10 +327,5 @@ namespace NEA_Project
         {
 
         }
-
-        private void Save_To_DB_Btn_Click(object sender, EventArgs e)
-        {
-
-        }
-    }
+	}
 }
