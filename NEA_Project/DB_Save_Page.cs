@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +18,9 @@ namespace NEA_Project
 		private int User_ID;
 		private letterData huffmanTree;
 
+		//If this constructor is called, we know the user is trying to save a text file.
+		//The parameters are the text that we want to save, as well as the User_ID of the current user.
+		//The ID is a parameter so that when the file is saved to the database (after compression) we know what user to save the file to.
 		public DB_Save_Page(string textToSave, int User_ID)
 		{
 			InitializeComponent();
@@ -27,6 +30,7 @@ namespace NEA_Project
 			fileType = "txt";
 		}
 
+		//This constructor is called when the user is trying to save an image file.
 		public DB_Save_Page(Image imageToSave, int User_ID)
 		{
 			InitializeComponent();
@@ -40,6 +44,7 @@ namespace NEA_Project
 
 		private void DB_Save_Page_Load(object sender, EventArgs e)
 		{
+			//On load we define new database tool and ask the user to name their file.
 			File_Name_Entry.Text = "Please enter a file name";
 			tool = new DBTool();
 		}
@@ -48,24 +53,29 @@ namespace NEA_Project
 		{
 			string requestedFileName = File_Name_Entry.Text;
 
+			//If the file name contains no spaces, continue.
 			if (checkFileNameFormat(requestedFileName))
 			{
-				if (fileType == "txt")
+				//Call certain functions bassed on what file type the user has entered.
+				switch (fileType)
 				{
-					//get user id
+					case "txt":
+						//get user id
 
-					string bin = compressText(Save_Text_Box.Text);
-					Console.WriteLine(bin);
+						string bin = compressText(Save_Text_Box.Text);
+						Console.WriteLine(bin);
 
-					//compress text
-					//gucci
+						//compress text
+						//gucci
 
-					//DateTime ghee = new DateTime();
+						//DateTime ghee = new DateTime();
+						break;
+					case "img":
+						break;
+					default:
+						break;
 				}
-				else
-				{
 
-				}
 			}
 			else
 			{
@@ -76,18 +86,23 @@ namespace NEA_Project
 		//I will be using a huffman table/compresion algorithm to compress my text.
 		private string compressText(string textToCompress)
 		{
-			//Create a frequency table.
+			//Create a frequency "table".
+			//The table is actually a linked list that contains letterData object types.
+			//Letter data contains values that can contain the character and its frequency.
 			LinkedList<letterData> letterAndFreq = new LinkedList<letterData>();
 
+			//Populate the linked list with every unique character and its frequency in textToCompress.
 			foreach (char letter in textToCompress)
 			{
+				//The letter exists function returns a bool. If it returns false, then a new letter is added.
+				//If the letter already exists then find that letter and increase the frequency by one.
 				if (!letterExists(letterAndFreq, letter))
 				{
+					//The constructor takes the letter and the start frequency.
 					letterData temp = new letterData(letter, 1);
 					letterAndFreq.AddLast(temp);
 				}
 			}
-
 
 			//Sort the letters into order of frequency smallest to largest.
 			//The following code involes using a bubble sort.
@@ -139,16 +154,18 @@ namespace NEA_Project
 				{
 					letterData temp = sortedData.First();
 					tempData.AddLast(temp);
-					if (sortedData.First.Value.Frequency >= freqNode.Frequency)
+					if (sortedData.First.Value.Frequency >= freqNode.Frequency && placed == false)
 					{
 						placed = true;
 						tempData.AddLast(freqNode);
+						Console.WriteLine(true);
 					}
 					sortedData.RemoveFirst();
 				}
 
 				if (!placed)
 				{
+					Console.WriteLine(false);
 					tempData.AddLast(freqNode);
 				}
 
@@ -158,10 +175,11 @@ namespace NEA_Project
 					sortedData.AddLast(l);
 				}
 
-				foreach (letterData l in sortedData)
+				//Testing writelines.
+				/*foreach (letterData l in sortedData)
 				{
 					Console.WriteLine("char: " + l.Character + " freq: " + l.Frequency + " len: " + sortedData.Count());
-				}
+				}*/
 
 				//Get the new length of sortedData.
 				len = sortedData.Count();
@@ -187,7 +205,7 @@ namespace NEA_Project
 
 			Console.WriteLine(letAndBin[0].binary);
 			
-			/*foreach (char character in textToCompress)
+			foreach (char character in textToCompress)
 			{
 				for (int i = 0; i < letAndBin.Length; i++)
 				{
@@ -197,7 +215,7 @@ namespace NEA_Project
 						break;
 					}
 				}
-			}*/
+			}
 
 
 			return textInBinary;
