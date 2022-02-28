@@ -16,7 +16,7 @@ namespace NEA_Project
 		private string fileType;
 		private DBTool tool;
 		private int User_ID;
-		private letterData huffmanTree;
+		private string compressionString;
 
 		//If this constructor is called, we know the user is trying to save a text file.
 		//The parameters are the text that we want to save, as well as the User_ID of the current user.
@@ -60,15 +60,29 @@ namespace NEA_Project
 				switch (fileType)
 				{
 					case "txt":
-						//get user id
+						string binary = compressText(Save_Text_Box.Text);
+						string file_Name = requestedFileName;
+						int originalSizeInBits = Save_Text_Box.Text.Length * 8;
+						int compressedSizeInBits = binary.Length;
+						DateTime dateOfCreation = DateTime.Now;
+						///Console.WriteLine(compressionString);
 
-						string bin = compressText(Save_Text_Box.Text);
-						Console.WriteLine(bin);
+
+						if (tool.add_New_File(User_ID, file_Name, binary, compressionString, compressedSizeInBits, dateOfCreation))
+						{
+							MessageBox.Show($"File saved successfully.\nFile was compressed from {originalSizeInBits} bits to {compressedSizeInBits} bits");
+						}
+						else
+						{
+							MessageBox.Show("File could not be saved.");
+						}
+
+
+
 
 						//compress text
 						//gucci
 
-						//DateTime ghee = new DateTime();
 						break;
 					case "img":
 						break;
@@ -158,16 +172,15 @@ namespace NEA_Project
 					{
 						placed = true;
 						tempData.AddLast(freqNode);
-						Console.WriteLine(true);
 					}
 					sortedData.RemoveFirst();
 				}
 
 				if (!placed)
 				{
-					Console.WriteLine(false);
 					tempData.AddLast(freqNode);
 				}
+
 
 				//Place the temp data back into sortedData.
 				foreach (letterData l in tempData)
@@ -188,22 +201,19 @@ namespace NEA_Project
 			//Now we have created our huffman tree, we need to create binary codes for each of the letters.
 			//Left is 0, right is 1.
 
-			huffmanTree = sortedData.First();
-
 			letterAndBinaryCode[] letAndBin = new letterAndBinaryCode[letterBinary.Count];
 			int counter = 0;
 
 			while (letterBinary.First != null)
 			{
 				letAndBin[counter] = new letterAndBinaryCode(letterBinary.First.Value.Character, letterBinary.First.Value.binaryCode);
+				compressionString += $"'{letterBinary.First.Value.Character}'{letterBinary.First.Value.binaryCode}";
 				letterBinary.RemoveFirst();
 				counter++;
 			}
 
 			//We now have a table of out letters and their new binary substitutes.
 			string textInBinary = "";
-
-			Console.WriteLine(letAndBin[0].binary);
 			
 			foreach (char character in textToCompress)
 			{

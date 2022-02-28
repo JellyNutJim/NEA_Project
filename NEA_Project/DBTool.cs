@@ -147,8 +147,11 @@ namespace NEA_Project
 			}
 		}
 
-
-
 		// ------------------------------------------------------------------------------------------------------------------------------ DB_Management page related database code.
+
+		public bool add_New_File(int User_ID, string filename, string fileBinary, string compressionString, int compressedFileSize, DateTime dateOfCreation)
+		{
+			return true;
+		}
 	}
 }

@@ -84,7 +84,6 @@ namespace NEA_Project
 
 		public static void HSBPixels()
 		{
-
 			for (int i = 0; i < imageArea; i++)
 			{
 				float pixelHue = pixels[i].GetHue();
