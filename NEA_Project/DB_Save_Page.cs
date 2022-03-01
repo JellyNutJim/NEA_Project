@@ -60,15 +60,17 @@ namespace NEA_Project
 				switch (fileType)
 				{
 					case "txt":
+						//Define the values that will be entered into the Saved_Files database table.
+						//This includes the compressed text, as well as various pieces of data relating to that text.
+						//One example being the compressionString -> this string is what will be used to decode the compressed text.
 						string binary = compressText(Save_Text_Box.Text);
 						string file_Name = requestedFileName;
 						int originalSizeInBits = Save_Text_Box.Text.Length * 8;
 						int compressedSizeInBits = binary.Length;
 						DateTime dateOfCreation = DateTime.Now;
-						///Console.WriteLine(compressionString);
 
-
-						if (tool.add_New_File(User_ID, file_Name, binary, compressionString, compressedSizeInBits, dateOfCreation))
+						//The add_New_File function returns a bool bassed on whether the query was completed successfully.
+						if (tool.add_New_File(User_ID, file_Name, binary, "Text", compressionString, compressedSizeInBits, dateOfCreation))
 						{
 							MessageBox.Show($"File saved successfully.\nFile was compressed from {originalSizeInBits} bits to {compressedSizeInBits} bits");
 						}
@@ -76,13 +78,7 @@ namespace NEA_Project
 						{
 							MessageBox.Show("File could not be saved.");
 						}
-
-
-
-
-						//compress text
-						//gucci
-
+						Close();
 						break;
 					case "img":
 						break;
