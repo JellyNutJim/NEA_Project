@@ -43,11 +43,11 @@ namespace NEA_Project
 			// 
 			this.Title_Label.AutoSize = true;
 			this.Title_Label.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
-			this.Title_Label.Location = new System.Drawing.Point(79, 9);
+			this.Title_Label.Location = new System.Drawing.Point(95, 9);
 			this.Title_Label.Name = "Title_Label";
-			this.Title_Label.Size = new System.Drawing.Size(150, 26);
+			this.Title_Label.Size = new System.Drawing.Size(103, 26);
 			this.Title_Label.TabIndex = 0;
-			this.Title_Label.Text = "Save Text File";
+			this.Title_Label.Text = "Save File";
 			// 
 			// Save_Image_Box
 			// 
@@ -113,7 +113,7 @@ namespace NEA_Project
 			this.Controls.Add(this.Save_Image_Box);
 			this.Controls.Add(this.Title_Label);
 			this.Name = "DB_Save_Page";
-			this.Text = "DB_Mangement_Page";
+			this.Text = "Save File";
 			this.Load += new System.EventHandler(this.DB_Save_Page_Load);
 			((System.ComponentModel.ISupportInitialize)(this.Save_Image_Box)).EndInit();
 			this.ResumeLayout(false);

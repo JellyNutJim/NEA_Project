@@ -261,7 +261,8 @@ namespace NEA_Project
 
         private void Load_From_DB_Btn_Click(object sender, EventArgs e)
         {
-            
+            DB_Load_Page loadPage = new DB_Load_Page(User_ID, Result_Img_Display, ML_Text_Display);
+            loadPage.Show();
         }
 
         // The following code contains functions that will be made use of multiple times by various button interactions. --------------------------------------------

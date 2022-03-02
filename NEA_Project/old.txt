@@ -212,3 +212,43 @@ CREATE TABLE [dbo].[User_Data] (
 				right--;
 			}
 		} */
+
+
+LinkedList<string> words = new LinkedList<string>();
+			words.AddLast("tteesst");
+
+			int i = 0;
+
+			while (words.Last != null)
+			{
+				i++;
+
+				if (i < 7)
+				{
+					words.AddLast("chees: " + i);
+				}
+				else
+				{
+					Console.WriteLine(words.First.Value);
+					words.RemoveFirst();
+
+				}
+
+			}
+
+			int num = 245;
+
+			string bin = "";
+
+			while (num > 0)
+			{
+				bin = Convert.ToString(num % 2) + bin;
+				num /= 2;
+			}
+
+			while (bin.Length < 14)
+			{
+				bin = "0" + bin;
+			}
+
+			Console.WriteLine("\n" + bin);

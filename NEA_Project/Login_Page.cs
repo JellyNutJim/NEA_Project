@@ -20,11 +20,9 @@ namespace NEA_Project
 
         public login_page()
         {
-            //TEMP ---------------------------------------------- TESTING
-            this.Hide();
-            Main_Page dbs = new Main_Page(9);
-            dbs.Show();
-            //TEMP ---------------------------------------------- TESTING
+            DB_Save_Page ds = new DB_Save_Page("lol cringe", 9);
+            ds.Show();
+
 
             InitializeComponent();
             tool = new DBTool();
@@ -67,7 +65,6 @@ namespace NEA_Project
 
                         //Get users encrypted password.
                         string user_Actual_Password = tool.get_String_From_Table(attemptedUserName);
-                        Console.WriteLine(user_Actual_Password);
 
                         //Compares the password the user entered to the one stored within the database.
                         //The "fail" is returned whenever the database was unable to retrieve the account details.
@@ -129,7 +126,6 @@ namespace NEA_Project
                         bool exists = false;
                         foreach (string user_Name in tool.check_Table_For_Values())
                         {
-                            Console.WriteLine(user_Name);
                             if (requestedUserName == user_Name)
                             {
                                 MessageBox.Show("Username already exist, please choose a different name");

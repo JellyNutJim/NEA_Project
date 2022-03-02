@@ -389,7 +389,7 @@ namespace NEA_Project
 			while (letterBinary.First != null)
 			{
 				letAndBin[counter] = new letterAndBinaryCode(letterBinary.First.Value.Character, letterBinary.First.Value.binaryCode);
-				compressionString += $"'{letterBinary.First.Value.Character}'{letterBinary.First.Value.binaryCode}";
+				compressionString += $"'{letterBinary.First.Value.Character}{letterBinary.First.Value.binaryCode}";
 				letterBinary.RemoveFirst();
 				counter++;
 			}

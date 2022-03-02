@@ -99,6 +99,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentence.cs" />
+    <EmbeddedResource Include="DB_Load_Page.resx">
+      <DependentUpon>DB_Load_Page.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DB_Save_Page.resx">
       <DependentUpon>DB_Save_Page.cs</DependentUpon>
     </EmbeddedResource>

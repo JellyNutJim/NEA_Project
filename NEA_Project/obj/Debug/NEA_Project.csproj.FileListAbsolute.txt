@@ -26,3 +26,4 @@ C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NE
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\bin\Debug\NEA_Data.mdf
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\bin\Debug\NEA_Data_log.ldf
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.DB_Save_Page.resources
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.DB_Load_Page.resources

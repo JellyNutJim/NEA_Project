@@ -169,13 +169,13 @@ namespace NEA_Project
 		//Adds the new file to the Saved_Files table, as well as adding the filetype to the File_Data table. 
 		public bool add_New_File(int User_ID, string File_Name, string File_Type, string File_Binary, string compression_String, int compressed_File_Size, DateTime date_Of_Creation)
 		{
-			string query2 = "INSERT INTO Saved_Files(User_ID, File_Name, File_Type, Saved_File, Compression_String, Compressed_File_Size, Date_Of_Creation) VALUES(@UserID, @FileName, @FileType, CAST(@SavedFile as VARBINARY(MAX)), @CompressionString, @CompressedFileSize, @DateOfCreation);";
+			string query = "INSERT INTO Saved_Files(User_ID, File_Name, File_Type, Saved_File, Compression_String, Compressed_File_Size, Date_Of_Creation) VALUES(@UserID, @FileName, @FileType, CAST(@SavedFile as VARBINARY(MAX)), @CompressionString, @CompressedFileSize, @DateOfCreation);";
 			try
 			{
 				using (connection = new SqlConnection(connectionString))
 				{
 
-					using (SqlCommand command = new SqlCommand(query2, connection))
+					using (SqlCommand command = new SqlCommand(query, connection))
 					{
 						command.CommandType = CommandType.Text;
 
@@ -198,8 +198,69 @@ namespace NEA_Project
 			} 
 			catch (Exception e)
 			{
+				Console.WriteLine(e);
 				return false;
 			}
+		}
+
+		public LinkedList<Saved_File_Data> get_All_Files(int User_ID)
+		{
+			string query = "SELECT File_Name, File_Type, Compressed_File_Size, Date_Of_Creation FROM Saved_Files WHERE User_ID = @UserID";
+			LinkedList<Saved_File_Data> data = new LinkedList<Saved_File_Data>();
+
+			using (connection = new SqlConnection(connectionString))
+			{
+				using (SqlCommand command = new SqlCommand(query, connection))
+				{
+					command.CommandType = CommandType.Text;
+
+					//Enter the parameters into the query.
+					command.Parameters.AddWithValue("@UserID", User_ID);
+
+					connection.Open();
+					using (SqlDataReader reader = command.ExecuteReader())
+					{
+						
+						while (reader.Read())
+						{
+							string File_Name = reader.GetString(0);
+							string File_Type = reader.GetString(1);
+							int C_File_Size = reader.GetInt32(2);
+							DateTime DOC = reader.GetDateTime(3);
+							data.AddLast(new Saved_File_Data(File_Name, File_Type, C_File_Size, DOC));
+						}
+						reader.Close();
+					}
+				}
+			}
+				return data;
+		}
+
+		public string[] get_Saved_File(int User_ID, string File_Name)
+		{
+			string query = "SELECT CAST(Saved_File as NVARCHAR(max)), Compression_String FROM Saved_Files WHERE User_ID = @UserID AND File_Name = @FileName";
+			string[] fileAndCS = new string[2];
+
+			using (connection = new SqlConnection(connectionString))
+			{
+				using (SqlCommand command = new SqlCommand(query, connection))
+				{
+					//Enter the parameters into the query.
+					command.Parameters.AddWithValue("@UserID", User_ID);
+					command.Parameters.AddWithValue("@FileName", File_Name);
+
+					connection.Open();
+					using (SqlDataReader reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							fileAndCS[0] = reader.GetString(0);
+							fileAndCS[1] = reader.GetString(1);
+						}
+					}
+				}
+			}
+					return fileAndCS;
 		}
 	}
 }
