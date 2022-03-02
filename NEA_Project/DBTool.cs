@@ -29,7 +29,11 @@ namespace NEA_Project
 		public DBTool()
 		{
 			//Gets the local path of the database on the users computer.
-			string generatedDatabasePath = Path.GetFullPath(@"NEA_Data.mdf");
+			//This returns the path of a temporary file created during debugging.
+			//Therefore we have to slightly alter the string so it points to the permanent database.
+			string generatedDatabasePath = Path.GetFullPath(@"NEA_Project");
+			generatedDatabasePath = generatedDatabasePath.Remove(generatedDatabasePath.Length - 21);
+			generatedDatabasePath += "NEA_Data.mdf";
 
 			//Creates a connection string using the generated database path.
 			connectionString = ($"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename={generatedDatabasePath};Integrated Security=True");
@@ -37,8 +41,9 @@ namespace NEA_Project
 
 		// ------------------------------------------------------------------------------------------------------------------------------ Login_Page related database code.
 
-		//Returns all usernames currently existing within the datbase.
-		public LinkedList<string> check_User_Name()
+		//Checks a specific colomn in a table.
+		//Be default this function returns all the names that exist within the User_Data table.
+		public LinkedList<string> check_Table_For_Values(string query = "SELECT User_Name FROM User_Data")
 		{
 			//This list will contain all existing names within the database.
 			LinkedList<string> user_Names = new LinkedList<string>();
@@ -46,7 +51,7 @@ namespace NEA_Project
 			//Using statement automatically closes the database connection.
 			using (connection = new SqlConnection(connectionString))
 			{
-				SqlCommand cmd = new SqlCommand("SELECT * FROM User_Data", connection);
+				SqlCommand cmd = new SqlCommand(query, connection);
 				connection.Open();
 
 				//Sql reader queries the database.
@@ -54,7 +59,7 @@ namespace NEA_Project
 				{
 					while (reader.Read())
 					{
-						user_Names.AddLast(reader.GetString(1));
+						user_Names.AddLast(reader.GetString(0));
 					}
 					reader.Close();
 				}
@@ -164,29 +169,36 @@ namespace NEA_Project
 		//Adds the new file to the Saved_Files table, as well as adding the filetype to the File_Data table. 
 		public bool add_New_File(int User_ID, string File_Name, string File_Type, string File_Binary, string compression_String, int compressed_File_Size, DateTime date_Of_Creation)
 		{
-			string query2 = "INSERT INTO Saved_Files(User_ID, File_Name, File_Type, Saved_File, Compression_String, Compressed_File_Size, Date_Of_Creation) VALUES(@UserID, @FileName, @FileType, CAST(@SavedFile as BINARY), @CompressionString, @CompressedFileSize, @DateOfCreation)";
-
-			using (connection = new SqlConnection(connectionString))
+			string query2 = "INSERT INTO Saved_Files(User_ID, File_Name, File_Type, Saved_File, Compression_String, Compressed_File_Size, Date_Of_Creation) VALUES(@UserID, @FileName, @FileType, CAST(@SavedFile as VARBINARY(MAX)), @CompressionString, @CompressedFileSize, @DateOfCreation);";
+			try
 			{
-
-				using (SqlCommand command = new SqlCommand(query2, connection))
+				using (connection = new SqlConnection(connectionString))
 				{
-					command.CommandType = CommandType.Text;
 
-					//Enter the parameters into the query.
-					command.Parameters.AddWithValue("@UserID", User_ID);
-					command.Parameters.AddWithValue("@FileName", File_Name);
-					command.Parameters.AddWithValue("@FileType", File_Type);
-					command.Parameters.AddWithValue("@SavedFile", File_Binary);
-					command.Parameters.AddWithValue("@CompressionString", compression_String);
-					command.Parameters.AddWithValue("@CompressedFileSize", compressed_File_Size);
-					command.Parameters.AddWithValue("@DateOfCreation", date_Of_Creation);
+					using (SqlCommand command = new SqlCommand(query2, connection))
+					{
+						command.CommandType = CommandType.Text;
 
-					//Open the connection and excute the query.
-					connection.Open();
-					command.ExecuteNonQuery();
+						//Enter the parameters into the query.
+						command.Parameters.AddWithValue("@UserID", User_ID);
+						command.Parameters.AddWithValue("@FileName", File_Name);
+						command.Parameters.AddWithValue("@FileType", File_Type);
+						command.Parameters.AddWithValue("@SavedFile", File_Binary);
+						command.Parameters.AddWithValue("@CompressionString", compression_String);
+						command.Parameters.AddWithValue("@CompressedFileSize", compressed_File_Size);
+						command.Parameters.AddWithValue("@DateOfCreation", date_Of_Creation);
+
+						//Open the connection and excute the query.
+						connection.Open();
+						command.ExecuteNonQuery();
+					}
 				}
+
 				return true;
+			} 
+			catch (Exception e)
+			{
+				return false;
 			}
 		}
 	}

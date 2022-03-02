@@ -178,7 +178,6 @@ namespace NEA_Project
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x + 1, pxs.y, Color.FromArgb(255, 255, 255));
 							}
-                            
 
                             //Check Up
                             if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y - 1)))
@@ -191,7 +190,6 @@ namespace NEA_Project
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x, pxs.y - 1, Color.FromArgb(255, 255, 255));
 							}
-                            
 
                             //Check Down
                             if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y + 1)))
@@ -209,6 +207,8 @@ namespace NEA_Project
 								pxToCheck.AddLast(tempLP);
 								input_Image.SetPixel(pxs.x, pxs.y + 1, Color.FromArgb(255, 255, 255));
                             }
+
+							//Potential error reducing code.
                             /*else
                             {
                                 for (int i = 1; i < 6; i++)

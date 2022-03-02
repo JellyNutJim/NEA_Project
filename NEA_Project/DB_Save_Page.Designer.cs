@@ -35,6 +35,7 @@ namespace NEA_Project
 			this.File_Name_Entry = new System.Windows.Forms.TextBox();
 			this.Loading_Bar = new System.Windows.Forms.ProgressBar();
 			this.Save_Text_Box = new System.Windows.Forms.RichTextBox();
+			this.Progress_Label = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.Save_Image_Box)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -76,7 +77,7 @@ namespace NEA_Project
 			// 
 			// Loading_Bar
 			// 
-			this.Loading_Bar.Location = new System.Drawing.Point(12, 395);
+			this.Loading_Bar.Location = new System.Drawing.Point(12, 409);
 			this.Loading_Bar.Name = "Loading_Bar";
 			this.Loading_Bar.Size = new System.Drawing.Size(145, 23);
 			this.Loading_Bar.TabIndex = 4;
@@ -90,11 +91,21 @@ namespace NEA_Project
 			this.Save_Text_Box.TabIndex = 5;
 			this.Save_Text_Box.Text = "";
 			// 
+			// Progress_Label
+			// 
+			this.Progress_Label.AutoSize = true;
+			this.Progress_Label.Location = new System.Drawing.Point(12, 390);
+			this.Progress_Label.Name = "Progress_Label";
+			this.Progress_Label.Size = new System.Drawing.Size(51, 13);
+			this.Progress_Label.TabIndex = 6;
+			this.Progress_Label.Text = "Progress:";
+			// 
 			// DB_Save_Page
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(315, 458);
+			this.Controls.Add(this.Progress_Label);
 			this.Controls.Add(this.Save_Text_Box);
 			this.Controls.Add(this.Loading_Bar);
 			this.Controls.Add(this.File_Name_Entry);
@@ -118,5 +129,6 @@ namespace NEA_Project
 		private System.Windows.Forms.TextBox File_Name_Entry;
 		private System.Windows.Forms.ProgressBar Loading_Bar;
 		private System.Windows.Forms.RichTextBox Save_Text_Box;
+		private System.Windows.Forms.Label Progress_Label;
 	}
 }

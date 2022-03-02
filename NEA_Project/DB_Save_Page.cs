@@ -13,10 +13,10 @@ namespace NEA_Project
 	public partial class DB_Save_Page : Form
 	{
 		//If string is parsed as an argument then the 
-		private string fileType;
 		private DBTool tool;
-		private int User_ID;
+		private string fileType;
 		private string compressionString;
+		private int User_ID;
 
 		//If this constructor is called, we know the user is trying to save a text file.
 		//The parameters are the text that we want to save, as well as the User_ID of the current user.
@@ -53,26 +53,29 @@ namespace NEA_Project
 		{
 			string requestedFileName = File_Name_Entry.Text;
 
-			//If the file name contains no spaces, continue.
+			//If the file name matches a certain set of requirements.
 			if (checkFileNameFormat(requestedFileName))
 			{
 				//Call certain functions bassed on what file type the user has entered.
+				string FileInBinary;
+				int originalSizeInBits;
+				int compressedFileSizeInBits;
+				DateTime dateOfCreation = DateTime.Now;
+
 				switch (fileType)
 				{
 					case "txt":
 						//Define the values that will be entered into the Saved_Files database table.
 						//This includes the compressed text, as well as various pieces of data relating to that text.
 						//One example being the compressionString -> this string is what will be used to decode the compressed text.
-						string binary = compressText(Save_Text_Box.Text);
-						string file_Name = requestedFileName;
-						int originalSizeInBits = Save_Text_Box.Text.Length * 8;
-						int compressedSizeInBits = binary.Length;
-						DateTime dateOfCreation = DateTime.Now;
+						FileInBinary = compressText(Save_Text_Box.Text);
+						originalSizeInBits = Save_Text_Box.Text.Length * 8;
+						compressedFileSizeInBits = FileInBinary.Length;
 
 						//The add_New_File function returns a bool bassed on whether the query was completed successfully.
-						if (tool.add_New_File(User_ID, file_Name, binary, "Text", compressionString, compressedSizeInBits, dateOfCreation))
+						if (tool.add_New_File(User_ID, requestedFileName, "text", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
 						{
-							MessageBox.Show($"File saved successfully.\nFile was compressed from {originalSizeInBits} bits to {compressedSizeInBits} bits");
+							MessageBox.Show($"File saved successfully.\nFile was compressed from {originalSizeInBits} bits to {compressedFileSizeInBits} bits\n(Not including metadata)");
 						}
 						else
 						{
@@ -80,22 +83,200 @@ namespace NEA_Project
 						}
 						Close();
 						break;
+
 					case "img":
+						//Compress image into binary
+						FileInBinary = compressImage(Save_Image_Box.Image);
+						originalSizeInBits = Save_Image_Box.Size.Width * Save_Image_Box.Image.Width * 8 * 3;
+						compressedFileSizeInBits = FileInBinary.Length;
+
+						//The compression string in this case, represents the length of one group of colours.
+
+						if (tool.add_New_File(User_ID, requestedFileName, "image", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
+						{
+							MessageBox.Show($"File saved successfully.\nFile was compressed from {originalSizeInBits} bits to {compressedFileSizeInBits} bits\n(Not including metadata)");
+						}
+						else
+						{
+							MessageBox.Show("File could not be saved.");
+						}
+
 						break;
 					default:
 						break;
 				}
 
 			}
-			else
-			{
-				MessageBox.Show("Please do not include spaces in your file name.");
-			}
 		}
+
+		// ----------------------------------------------------------------------------------------------------------------------------------------- Image Compression
+
+		private string compressImage(Image imgToCompress)
+		{
+			//When compressing this image there are a few things to take into account.
+			// 1: It will be made up of only black and white pixels.
+			// 2: It will contain writing.
+			// 3: It will be a maxiumum of a 4k image.
+			// 4: It must be stored as a binary string.
+
+			//Taking all these factors into account I have decided to use a binary form of run length encoding.
+			//I beleive this to be the best option as im only dealing with two colours which can be easiliy represented with either a 1 or a 0.
+			//As image width can vary significantly, therefore, the maximum amount of repeating characters can also vary.
+			//It wouldn't make sense to use the same static upper bound for every image as this could either be too small, or too large.
+			//Too small and we would loose data on compression, too big and lots of space is wasted.
+			//Therefore the system will detect the largest binary sequence (a sequence representing an amount of repeating pixels) and have that be the standard max.
+			
+			//Additionally two numbers representing the height and width will be placed at the start of the binary string.
+
+			//This is an example of what a image with a 4k width in my binary compression form would look like:
+			// Bits 1 - 14: Represent the number of a certain colour.
+			// Bit 15:      Represents the colour of said pixel (1 = white, 0 = black)
+			// Bit 16:      Represents a whether this pixel group is the last on a line. (0 = no, 1 = yes)
+
+			//This system will also make it incrediby easy to decompress.
+
+			//Setup the loading bar.
+			Loading_Bar.Maximum = 4;
+			Loading_Bar.Style = ProgressBarStyle.Blocks;
+			Loading_Bar.Value = 0;
+
+			Bitmap bitmapToCompress = new Bitmap(imgToCompress);
+			LinkedList<String> tempBinaryHolder = new LinkedList<string>();
+			string bitmapAsCompressedBinary = "", colour = "", newline = "0";
+			int amountOfRepeats = 0;
+
+			//The loading bar is not incremented during the while loop.
+			//This is because it significantly reduces the speed of the program.
+			Loading_Bar.Increment(1);
+
+			for (int y = 0; y < bitmapToCompress.Height; y++)
+			{
+				for (int x = 0; x < bitmapToCompress.Width; x++)
+				{
+					newline = "0";
+					amountOfRepeats = 0;
+
+					//Check for white groups. --> I check for white first as the majority of pixels will be white.
+					if (!isBlack(bitmapToCompress.GetPixel(x, y)))
+					{
+						colour = "0";
+					}
+					else
+					{
+						colour = "1";
+					}
+
+					do
+					{
+						amountOfRepeats++;
+						x++;
+
+						//Check if we have reached the end of a line.
+						if (x == bitmapToCompress.Width)
+						{
+							newline = "1";
+							break;
+						}
+					}
+					while (!isBlack(bitmapToCompress.GetPixel(x, y)));
+					tempBinaryHolder.AddLast($"{convertToBinary(amountOfRepeats)}{colour}{newline}");
+				}
+			}
+
+			Loading_Bar.Increment(1);
+
+			//Add the width and height values to start of the compressed binary string.
+			//This is less time efficent then just storing these values in the compression string, but it is more space efficient.
+			string width = convertToBinary(bitmapToCompress.Width);
+			string height = convertToBinary(bitmapToCompress.Height);
+			int len = 0;
+
+			while (width.Length > height.Length)
+			{
+				len = width.Length;
+				height = "0" + height;
+			}
+
+			while (height.Length > width.Length)
+			{
+				len = height.Length;
+				width = "0" + width;
+			}
+
+			compressionString += len;
+			Loading_Bar.Increment(1);
+
+			//Find the longest binary string, and add 0s to all the other strings so they are the same standard length.
+			int maxLength = 0;
+
+			//Defines maxlength to be the length of the sequence with the highest length.
+			foreach (string sequence in tempBinaryHolder)
+			{
+				if (sequence.Length > maxLength)
+				{
+					maxLength = sequence.Length;
+				}
+			}
+
+			//Increases the length of the other binary sequences to be equal to the longest sequence.
+			//Then we add all of those binary sequence into the main string bitmapAsCompressedBinary.
+
+			string tempSequence;
+			
+			while (tempBinaryHolder.First != null)
+			{
+				tempSequence = tempBinaryHolder.First.Value;
+
+				while (tempSequence.Length < maxLength)
+				{
+					tempSequence = "0" + tempSequence;
+				}
+				bitmapAsCompressedBinary += tempSequence;
+
+				tempBinaryHolder.RemoveFirst();
+			}
+
+			Loading_Bar.Increment(1);
+			compressionString += "_" + Convert.ToString(maxLength);
+			return bitmapAsCompressedBinary;
+		}
+
+		//Converts an integer (Denary) into a binary sequence.
+		private string convertToBinary(int num)
+		{
+			string binary = "";
+
+			while (num > 0)
+			{
+				binary = Convert.ToString(num % 2) + binary;
+				num /= 2;
+			}
+
+			return binary;
+		}
+
+		private bool isBlack(Color pixel)
+		{
+			if (pixel.GetBrightness() <= 0.2)
+			{
+				return true;
+			}
+			return false;
+		}
+
+
+
+		// ----------------------------------------------------------------------------------------------------------------------------------------- Text Compression
 
 		//I will be using a huffman table/compresion algorithm to compress my text.
 		private string compressText(string textToCompress)
 		{
+			//Setup the loading bar.
+			Loading_Bar.Maximum = 5;
+			Loading_Bar.Style = ProgressBarStyle.Blocks;
+			Loading_Bar.Value = 0;
+
+
 			//Create a frequency "table".
 			//The table is actually a linked list that contains letterData object types.
 			//Letter data contains values that can contain the character and its frequency.
@@ -114,11 +295,14 @@ namespace NEA_Project
 				}
 			}
 
+			Loading_Bar.Increment(1);
+
 			//Sort the letters into order of frequency smallest to largest.
 			//The following code involes using a bubble sort.
 			LinkedList<letterData> sortedData = new LinkedList<letterData>();
 			LinkedList<letterData> letterBinary = new LinkedList<letterData>();
 			sortedData = bubbleSort(letterAndFreq);
+			Loading_Bar.Increment(1);
 
 			int len = sortedData.Count();
 
@@ -194,6 +378,8 @@ namespace NEA_Project
 				len = sortedData.Count();
 			}
 
+			Loading_Bar.Increment(1);
+
 			//Now we have created our huffman tree, we need to create binary codes for each of the letters.
 			//Left is 0, right is 1.
 
@@ -207,6 +393,8 @@ namespace NEA_Project
 				letterBinary.RemoveFirst();
 				counter++;
 			}
+
+			Loading_Bar.Increment(1);
 
 			//We now have a table of out letters and their new binary substitutes.
 			string textInBinary = "";
@@ -223,7 +411,7 @@ namespace NEA_Project
 				}
 			}
 
-
+			Loading_Bar.Increment(1);
 			return textInBinary;
 		}
 
@@ -279,28 +467,31 @@ namespace NEA_Project
 			return sortedLL;
 		}
 
-		private void mergeSort(LinkedList<letterData> listToSort, int left, int right)
-		{
-			int mid;
-			if (right > left)
-			{
-				mid = (right + left) / 2;
-				mergeSort(listToSort, left, mid);
-				mergeSort(listToSort, (mid + 1), right);
 
-			}
-		}
-
-		//Checks if the requested file name contains any spaces.
+		//Checks if the requested file name contains any spaces and whether the name is already used.
 		private bool checkFileNameFormat(string name)
 		{
+			//Compares all letters to a space.
 			foreach (char letter in name)
 			{
 				if (letter == ' ')
 				{
+					MessageBox.Show("Please do not include spaces in your file name.");
 					return false;
 				}
 			}
+
+			//Checks the names off all files associated with this user and them compares the requested name to these exising names.
+			//If the requested name matches a name aleady present, then return false, as a unique name is required to distinguish files.
+			foreach (string file_Name in tool.check_Table_For_Values($"SELECT File_Name FROM Saved_Files WHERE User_ID = {User_ID}"))
+			{
+				if (name == file_Name)
+				{
+					MessageBox.Show("This file name already exists.\nPlease choose a different name.");
+					return false;
+				}
+			}
+
 			return true;
 		}
 	}

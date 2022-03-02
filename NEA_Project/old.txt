@@ -138,3 +138,77 @@ CREATE TABLE [dbo].[User_Data] (
     [User_Password] VARCHAR (64) NOT NULL,
     PRIMARY KEY CLUSTERED ([User_ID] ASC)
 );
+
+		/* private LinkedList<letterData> sortList(LinkedList<letterData> listToSort)
+		{
+			LinkedList<letterData> sortedLL = new LinkedList<letterData>();
+			int length = listToSort.Count();
+			letterData[] orderedLetters = new letterData[length];
+
+			//Convert listToSort into an array that will be used for sorting.
+			int counter = 0;
+
+			foreach (letterData l in listToSort)
+			{
+				orderedLetters[counter] = l;
+				counter++;
+			}
+
+			mergeSort(orderedLetters, 0, orderedLetters.Length - 1, orderedLetters.Length);
+
+			foreach (letterData l in orderedLetters)
+			{
+				sortedLL.AddLast(l);
+			}
+
+			return sortedLL;
+		}
+
+		private void mergeSort(letterData[] arrayToSort, int left, int right, int len)
+		{
+			int mid;
+			if (right > left)
+			{
+				mid = (right + left) / 2;
+				mergeSort(arrayToSort, left, mid, len);
+				mergeSort(arrayToSort, (mid + 1), right, len);
+				mergeMethod(arrayToSort, left, mid++, right, len);
+			}
+		}
+
+		private void mergeMethod(letterData[] lData, int left, int mid, int right, int len)
+		{
+			letterData[] temp = new letterData[len];
+			int leftEnd, numberOfElements, tempPos;
+			leftEnd = mid - 1;
+			tempPos = left;
+			numberOfElements = (right - Left + 1);
+
+			while ((left <= leftEnd) && (mid <= right))
+			{
+				if (lData[left].Frequency <= lData[mid].Frequency)
+				{
+					temp[tempPos++] = lData[mid++];
+				}
+				else
+				{
+					temp[tempPos++] = lData[mid++];
+				}
+			}
+
+			while (left <= leftEnd)
+			{
+				temp[tempPos++] = lData[left++];
+			}
+
+			while (mid <= right)
+			{
+				temp[tempPos++] = lData[right];
+			}
+
+			for (int i = 0; i < numberOfElements; i++)
+			{
+				lData[right] = temp[right];
+				right--;
+			}
+		} */

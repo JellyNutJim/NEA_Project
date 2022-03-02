@@ -22,7 +22,7 @@ namespace NEA_Project
         {
             //TEMP ---------------------------------------------- TESTING
             this.Hide();
-            DB_Save_Page dbs = new DB_Save_Page("deadmeme like wtf why woulkd you do that", 9);
+            Main_Page dbs = new Main_Page(9);
             dbs.Show();
             //TEMP ---------------------------------------------- TESTING
 
@@ -50,7 +50,7 @@ namespace NEA_Project
                 {
                     //Gets each user name present in the User_Data table.
                     //The attempted username is then compared agaisnt these to check if it exists.
-                    foreach (string user_Name in tool.check_User_Name())
+                    foreach (string user_Name in tool.check_Table_For_Values())
                     {
                         if (attemptedUserName == user_Name)
                         {
@@ -127,7 +127,7 @@ namespace NEA_Project
 
                         //Checks if username already exists within the datbase.
                         bool exists = false;
-                        foreach (string user_Name in tool.check_User_Name())
+                        foreach (string user_Name in tool.check_Table_For_Values())
                         {
                             Console.WriteLine(user_Name);
                             if (requestedUserName == user_Name)
@@ -194,7 +194,7 @@ namespace NEA_Project
 
         private bool usernameFormatCheck(string username)
 		{
-            if (username.Length < 7)
+            if (username.Length <= 5)
 			{
                 return false;
 			}
