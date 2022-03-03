@@ -38,9 +38,6 @@ namespace NEA_Project
 
 				data.RemoveFirst();
 			}
-
-
-			
 		}
 
 		private void Load_File_Btn_Click(object sender, EventArgs e)
