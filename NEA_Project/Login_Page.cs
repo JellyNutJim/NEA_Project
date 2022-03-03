@@ -20,9 +20,8 @@ namespace NEA_Project
 
         public login_page()
         {
-            DB_Save_Page ds = new DB_Save_Page("lol cringe", 9);
-            ds.Show();
-
+            Main_Page mp = new Main_Page(9);
+            mp.Show();
 
             InitializeComponent();
             tool = new DBTool();

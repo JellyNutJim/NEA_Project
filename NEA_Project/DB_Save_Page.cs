@@ -81,6 +81,7 @@ namespace NEA_Project
 						{
 							MessageBox.Show("File could not be saved.");
 						}
+
 						Close();
 						break;
 
@@ -101,7 +102,9 @@ namespace NEA_Project
 							MessageBox.Show("File could not be saved.");
 						}
 
+						Close();
 						break;
+
 					default:
 						break;
 				}
@@ -191,6 +194,7 @@ namespace NEA_Project
 			string height = convertToBinary(bitmapToCompress.Height);
 			int len = 0;
 
+
 			while (width.Length > height.Length)
 			{
 				len = width.Length;
@@ -202,6 +206,8 @@ namespace NEA_Project
 				len = height.Length;
 				width = "0" + width;
 			}
+
+			bitmapAsCompressedBinary += width + height;
 
 			compressionString += len;
 			Loading_Bar.Increment(1);

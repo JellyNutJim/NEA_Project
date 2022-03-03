@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,9 +26,12 @@ namespace NEA_Project
 			Input_Img_Display.AllowDrop = true;
 
             //Hides the rich text box that will display any text that has been processed.
-            ML_Text_Display.SendToBack();
-            ML_Text_Display.ReadOnly = false;
-            ML_Text_Display.Text = "";
+            Result_Text_Display.SendToBack();
+            Result_Text_Display.ReadOnly = false;
+            Result_Text_Display.Text = "";
+
+            //A label used to store a users chosen filename when saving a file.
+            filename_Holder.SendToBack();
 
         }
 
@@ -73,8 +77,8 @@ namespace NEA_Project
         //Called when the remove background button is selected.
         private void Remove_BG_Btn_Click(object sender, EventArgs e)
 		{
-            ML_Text_Display.SendToBack();
-            ML_Text_Display.Text = "";
+            Result_Text_Display.SendToBack();
+            Result_Text_Display.Text = "";
 
 			//Checks whether an image is actually present within the input_Img_Display picturebox.
 			//If there is, call the removeBG with the image.
@@ -108,8 +112,8 @@ namespace NEA_Project
         //Called when the split letters button is selected.
         private void Split_Letters_Btn_Click(object sender, EventArgs e)
         {
-            ML_Text_Display.SendToBack();
-            ML_Text_Display.Text = "";
+            Result_Text_Display.SendToBack();
+            Result_Text_Display.Text = "";
 
             Loading_Bar.Maximum = 5;
             Loading_Bar.Style = ProgressBarStyle.Blocks;
@@ -158,7 +162,7 @@ namespace NEA_Project
         private void Convert_To_Text_Btn_Click(object sender, EventArgs e)
 		{
             split();
-            ML_Text_Display.BringToFront();
+            Result_Text_Display.BringToFront();
 		}
 
         //Called when the download button is selected.
@@ -179,9 +183,15 @@ namespace NEA_Project
                         if (getFolderLocation.ShowDialog() == DialogResult.OK)
                         {
                             string folderLocation = getFolderLocation.SelectedPath;
+
+                            enter_File_Name_Page efnp = new enter_File_Name_Page(filename_Holder);
+                            efnp.ShowDialog();
+
+                            string filename = filename_Holder.Text;
+
                             try
                             {
-                                Result_Img_Display.Image.Save(folderLocation + @"\Download.png");
+                                Result_Img_Display.Image.Save(folderLocation + $@"\{filename}.png");
                                 MessageBox.Show("Download Successful");
                             }
                             catch
@@ -205,11 +215,17 @@ namespace NEA_Project
                         {
                             string folderLocation = getFolderLocation.SelectedPath;
                             int num = 1;
+
+                            enter_File_Name_Page efnp = new enter_File_Name_Page(filename_Holder);
+                            efnp.ShowDialog();
+
+                            string filename = filename_Holder.Text;
+
                             try
                             {
                                 foreach (Bitmap letter in letters)
                                 {
-                                    letter.Save(folderLocation + $@"\letter{num}.png");
+                                    letter.Save(folderLocation + $@"\{filename}{num}.png");
                                     num++;
                                 }
                                 MessageBox.Show("Download Successful");
@@ -226,7 +242,34 @@ namespace NEA_Project
                     }
 
                     break;
+
                 case "Text File":
+                    if (Result_Text_Display.Text != null)
+					{
+                        FolderBrowserDialog getFolderLocation = new FolderBrowserDialog();
+
+                        if (getFolderLocation.ShowDialog() == DialogResult.OK)
+						{
+                            string folderLocation = getFolderLocation.SelectedPath;
+
+                            enter_File_Name_Page efnp = new enter_File_Name_Page(filename_Holder);
+                            efnp.ShowDialog();
+
+                            string filename = filename_Holder.Text;
+
+                            using (StreamWriter sw = new StreamWriter(folderLocation + $@"\{filename}.txt"))
+							{
+                                sw.WriteLine(Result_Text_Display.Text);
+							}
+
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("There must be text present to download");
+                    }
+
+
                     break;
                 default:
                     MessageBox.Show("Please select a download option");
@@ -240,11 +283,11 @@ namespace NEA_Project
             //Firstly, we need to check if the user is trying to save a text file, or an image file.
             //We do this by checking if the ML_Text_Display text box has any text present.
 
-            if (ML_Text_Display.Text != "")
+            if (Result_Text_Display.Text != "")
             {
                 //We now know that the user is trying to save a text file.
                 //And can therefore open up the database same menu.
-                DB_Save_Page dbs = new DB_Save_Page(ML_Text_Display.Text, User_ID);
+                DB_Save_Page dbs = new DB_Save_Page(Result_Text_Display.Text, User_ID);
                 dbs.Show();
             }
             else if (Result_Img_Display.Image != null)
@@ -259,9 +302,10 @@ namespace NEA_Project
 			}
         }
 
+        //Called when the user tries to load a file from the database by pressing the Load button.
         private void Load_From_DB_Btn_Click(object sender, EventArgs e)
         {
-            DB_Load_Page loadPage = new DB_Load_Page(User_ID, Result_Img_Display, ML_Text_Display);
+            DB_Load_Page loadPage = new DB_Load_Page(User_ID, Result_Img_Display, Result_Text_Display);
             loadPage.Show();
         }
 

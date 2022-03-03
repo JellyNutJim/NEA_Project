@@ -77,6 +77,12 @@
     <Compile Include="DB_Save_Page.Designer.cs">
       <DependentUpon>DB_Save_Page.cs</DependentUpon>
     </Compile>
+    <Compile Include="enter_File_Name_Page.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="enter_File_Name_Page.Designer.cs">
+      <DependentUpon>enter_File_Name_Page.cs</DependentUpon>
+    </Compile>
     <Compile Include="huffmanCompression.cs" />
     <Compile Include="Login_Page.cs">
       <SubType>Form</SubType>
@@ -104,6 +110,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DB_Save_Page.resx">
       <DependentUpon>DB_Save_Page.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="enter_File_Name_Page.resx">
+      <DependentUpon>enter_File_Name_Page.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login_Page.resx">
       <DependentUpon>Login_Page.cs</DependentUpon>

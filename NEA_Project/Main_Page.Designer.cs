@@ -49,7 +49,8 @@ namespace NEA_Project
 			this.Loading_Bar = new System.Windows.Forms.ProgressBar();
 			this.Progress_Bar_Label = new System.Windows.Forms.Label();
 			this.Current_Status_Label = new System.Windows.Forms.Label();
-			this.ML_Text_Display = new System.Windows.Forms.RichTextBox();
+			this.Result_Text_Display = new System.Windows.Forms.RichTextBox();
+			this.filename_Holder = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.Input_Img_Display)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.Result_Img_Display)).BeginInit();
 			this.SuspendLayout();
@@ -251,21 +252,32 @@ namespace NEA_Project
 			this.Current_Status_Label.TabIndex = 19;
 			this.Current_Status_Label.Text = "placeholder";
 			// 
-			// ML_Text_Display
+			// Result_Text_Display
 			// 
-			this.ML_Text_Display.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.ML_Text_Display.Location = new System.Drawing.Point(325, 21);
-			this.ML_Text_Display.Name = "ML_Text_Display";
-			this.ML_Text_Display.Size = new System.Drawing.Size(234, 405);
-			this.ML_Text_Display.TabIndex = 20;
-			this.ML_Text_Display.Text = "";
+			this.Result_Text_Display.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.Result_Text_Display.Location = new System.Drawing.Point(325, 21);
+			this.Result_Text_Display.Name = "Result_Text_Display";
+			this.Result_Text_Display.Size = new System.Drawing.Size(234, 405);
+			this.Result_Text_Display.TabIndex = 20;
+			this.Result_Text_Display.Text = "";
+			// 
+			// filename_Holder
+			// 
+			this.filename_Holder.AutoSize = true;
+			this.filename_Holder.ForeColor = System.Drawing.SystemColors.Control;
+			this.filename_Holder.Location = new System.Drawing.Point(26, 21);
+			this.filename_Holder.Name = "filename_Holder";
+			this.filename_Holder.Size = new System.Drawing.Size(27, 13);
+			this.filename_Holder.TabIndex = 21;
+			this.filename_Holder.Text = "hold";
 			// 
 			// Main_Page
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Controls.Add(this.ML_Text_Display);
+			this.Controls.Add(this.filename_Holder);
+			this.Controls.Add(this.Result_Text_Display);
 			this.Controls.Add(this.Current_Status_Label);
 			this.Controls.Add(this.Progress_Bar_Label);
 			this.Controls.Add(this.Loading_Bar);
@@ -318,6 +330,7 @@ namespace NEA_Project
         private System.Windows.Forms.ProgressBar Loading_Bar;
         private System.Windows.Forms.Label Progress_Bar_Label;
         private System.Windows.Forms.Label Current_Status_Label;
-		private System.Windows.Forms.RichTextBox ML_Text_Display;
+		private System.Windows.Forms.RichTextBox Result_Text_Display;
+		private System.Windows.Forms.Label filename_Holder;
 	}
 }
