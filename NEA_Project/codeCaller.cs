@@ -8,7 +8,6 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
-
 namespace NEA_Project
 {
 	class codeCaller
@@ -37,7 +36,6 @@ namespace NEA_Project
             status_Label.Text = "Setting new Pixels";
             BackgroundEdit.SetAllPixels();
             loadingBar.Increment(1);
-
         }
 	}
 }
