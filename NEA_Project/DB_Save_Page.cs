@@ -261,6 +261,8 @@ namespace NEA_Project
 			return binary;
 		}
 
+
+		//MAKE INTO A STATIC FUNCTION IN A SEPERATE CLASS AS BG REMOVE ALSO USES THIS FUNCTION
 		private bool isBlack(Color pixel)
 		{
 			if (pixel.GetBrightness() <= 0.2)
