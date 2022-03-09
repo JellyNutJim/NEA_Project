@@ -23,6 +23,9 @@ namespace NEA_Project
             Main_Page mp = new Main_Page(9);
             mp.Show();
 
+            DB_Save_Page dp = new DB_Save_Page("This is a test", 9);
+            dp.Show();
+
             InitializeComponent();
             tool = new DBTool();
         }
@@ -209,7 +212,7 @@ namespace NEA_Project
             string regexUpperCase = "[A-Z]";
             string regexLowerCase = "[a-z]";
             string regexNumber = "[0-9]";
-            string regexSpecialChar = "[!£$%^&*()-=+_/@'{}#~;:<>,./?@¬`]";
+            string regexSpecialChar = "[!£$%^&*()-=+_/@'|{}#~;:<>,./?@¬`]";
 
             //Each check has been seperated into a different statement.
             //While this is not as efficient as just finding the first error and then breaking, it allows me to give the user a detailed log of what went wrong.

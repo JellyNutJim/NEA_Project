@@ -47,6 +47,7 @@ namespace NEA_Project
 			//On load we define new database tool and ask the user to name their file.
 			File_Name_Entry.Text = "Please enter a file name";
 			tool = new DBTool();
+			Console.WriteLine($"Filetype is {fileType}");
 		}
 
 		private void Save_File_Btn_Click(object sender, EventArgs e)
@@ -68,6 +69,7 @@ namespace NEA_Project
 						//Define the values that will be entered into the Saved_Files database table.
 						//This includes the compressed text, as well as various pieces of data relating to that text.
 						//One example being the compressionString -> this string is what will be used to decode the compressed text.
+						Console.WriteLine("Calling compressText");
 						FileInBinary = compressText(Save_Text_Box.Text);
 						originalSizeInBits = Save_Text_Box.Text.Length * 8;
 						compressedFileSizeInBits = FileInBinary.Length;
@@ -87,6 +89,7 @@ namespace NEA_Project
 
 					case "img":
 						//Compress image into binary
+						Console.WriteLine("Calling compressImage");
 						FileInBinary = compressImage(Save_Image_Box.Image);
 						originalSizeInBits = Save_Image_Box.Size.Width * Save_Image_Box.Image.Width * 8 * 3;
 						compressedFileSizeInBits = FileInBinary.Length;
@@ -479,14 +482,9 @@ namespace NEA_Project
 		//Checks if the requested file name contains any spaces and whether the name is already used.
 		private bool checkFileNameFormat(string name)
 		{
-			//Compares all letters to a space.
-			foreach (char letter in name)
+			if (!generalFunctions.checkFileNameValid(name))
 			{
-				if (letter == ' ')
-				{
-					MessageBox.Show("Please do not include spaces in your file name.");
-					return false;
-				}
+				return false;
 			}
 
 			//Checks the names off all files associated with this user and them compares the requested name to these exising names.

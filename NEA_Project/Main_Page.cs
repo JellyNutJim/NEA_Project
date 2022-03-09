@@ -93,7 +93,7 @@ namespace NEA_Project
                 Loading_Bar.Style = ProgressBarStyle.Blocks;
                 Loading_Bar.Value = 0;
 
-				codeCaller.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
+				generalFunctions.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
 			}
 			else
 			{
@@ -319,7 +319,7 @@ namespace NEA_Project
                 Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
 
                 Current_Status_Label.Visible = true;
-                codeCaller.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
+                generalFunctions.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
 
                 //Splits image into chracters.
                 Bitmap image = new Bitmap(BackgroundEdit.finalImage);

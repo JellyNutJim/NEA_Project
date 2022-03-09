@@ -96,7 +96,7 @@
     <Compile Include="Main_Page.Designer.cs">
       <DependentUpon>Main_Page.cs</DependentUpon>
     </Compile>
-    <Compile Include="codeCaller.cs" />
+    <Compile Include="generalFunctions.cs" />
     <Compile Include="NEA_DataDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
