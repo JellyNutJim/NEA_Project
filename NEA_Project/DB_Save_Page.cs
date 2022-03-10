@@ -501,6 +501,4 @@ namespace NEA_Project
 			return true;
 		}
 	}
-
-
 }

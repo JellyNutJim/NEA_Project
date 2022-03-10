@@ -58,7 +58,7 @@ namespace NEA_Project
             //Checks to see if any invalid filename characters have been used.
             if ((Regex.Match(filename, bannedCharacters).Success))
             {
-                MessageBox.Show(@"Make sure your filename does not include any of the following characters:\n" + @"'\', '/', ':', ':', '*', '?', ', '<', '>', '|'");
+                MessageBox.Show("Make sure your filename does not include any of the following characters:\n" + @"'\', '/', ':', ':', '*', '?', ', '<', '>', '|'");
                 return false;
             }
 

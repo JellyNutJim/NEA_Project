@@ -107,6 +107,7 @@ namespace NEA_Project
 			Result_Img_Display.Image = (Image)(BackgroundEdit.finalImage);
 			Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
             Current_Status_Label.Text = "Done!";
+            Select_Download_Type_CB.Text = "Single Image";
 		}
 
         //Called when the split letters button is selected.
@@ -137,6 +138,8 @@ namespace NEA_Project
                 letters = tempLetters.letters;
                 LinkedList<Bitmap> drawletters = letters;
 
+                //Create an array of the linked list to display the spi
+
 
                 //Draw the new letters into the result picturebox.
                 /*int start = 0;
@@ -153,6 +156,7 @@ namespace NEA_Project
                 Result_Img_Display.Image = allLetters;
                 Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
                 Current_Status_Label.Text = "Done!";
+                Select_Download_Type_CB.Text = "Multiple Imags";
             }
         }
 
@@ -193,6 +197,7 @@ namespace NEA_Project
                             {
                                 Result_Img_Display.Image.Save(folderLocation + $@"\{filename}.png");
                                 MessageBox.Show("Download Successful");
+                                Result_Text_Display.SendToBack();
                             }
                             catch
                             {
@@ -226,6 +231,7 @@ namespace NEA_Project
                                 foreach (Bitmap letter in letters)
                                 {
                                     letter.Save(folderLocation + $@"\{filename}{num}.png");
+                                    Result_Img_Display.Image = null;
                                     num++;
                                 }
                                 MessageBox.Show("Download Successful");
@@ -305,7 +311,7 @@ namespace NEA_Project
         //Called when the user tries to load a file from the database by pressing the Load button.
         private void Load_From_DB_Btn_Click(object sender, EventArgs e)
         {
-            DB_Load_Page loadPage = new DB_Load_Page(User_ID, Result_Img_Display, Result_Text_Display);
+            DB_Load_Page loadPage = new DB_Load_Page(User_ID, Result_Img_Display, Result_Text_Display, Select_Download_Type_CB);
             loadPage.Show();
         }
 

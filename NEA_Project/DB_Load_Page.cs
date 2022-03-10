@@ -15,6 +15,7 @@ namespace NEA_Project
 		private int User_ID;
 		private PictureBox ImageDisplay;
 		private RichTextBox TextDisplay;
+		private ComboBox comboReturn;
 		private int x;
 		private int y;
 		DBTool tool;
@@ -23,7 +24,7 @@ namespace NEA_Project
 		//The User_ID is used so that the user is only shown their own files.
 		//The imageDisplay and textDisplay are both form elements that can be used to display the users chosen file.
 		//As we do not know what type of file the user is going to try load, we need both form elements just in case.
-		public DB_Load_Page(int user_ID, PictureBox imageDisplay, RichTextBox textDisplay)
+		public DB_Load_Page(int user_ID, PictureBox imageDisplay, RichTextBox textDisplay, ComboBox comboReturn)
 		{
 			InitializeComponent();
 
@@ -32,6 +33,7 @@ namespace NEA_Project
 			this.User_ID = user_ID;
 			this.ImageDisplay = imageDisplay;
 			this.TextDisplay = textDisplay;
+			this.comboReturn = comboReturn;
 		}
 
 		//Called after the load page has loaded.
@@ -86,6 +88,7 @@ namespace NEA_Project
 						//Assign the text_Diplay form element on the main page to the now decompressed string.
 						TextDisplay.Text = decompressedText;
 						TextDisplay.BringToFront();
+						comboReturn.Text = "Text File";
 
 						//Close the load page display.
 						Close();
@@ -98,18 +101,19 @@ namespace NEA_Project
 					break;
 
 				case "image":
-					//try
-					//{
+					try
+					{
 						Bitmap decompressedImage = decompressImage(fileAndCompressionString[0], fileAndCompressionString[1]);
 						ImageDisplay.Image = decompressedImage;
 						ImageDisplay.BringToFront();
+						comboReturn.Text = "Single image";
 						Close();
-					//} 
-					//catch (Exception exc)
-					//{
-						//Console.WriteLine(exc);
-						//MessageBox.Show("File could not be loaded");
-					//}
+					} 
+					catch (Exception exc)
+					{
+						Console.WriteLine(exc);
+						MessageBox.Show("File could not be loaded");
+					}
 
 					break;
 
