@@ -63,7 +63,7 @@ namespace NEA_Project
                     if (userExists)
                     {
                         //Encrypt password
-                        attemptedPassword = EncodePasswordToBase64(attemptedPassword);
+                        attemptedPassword = createHash(attemptedUserName, attemptedPassword);
 
                         //Get users encrypted password.
                         string user_Actual_Password = tool.get_String_From_Table(attemptedUserName);
@@ -267,9 +267,9 @@ namespace NEA_Project
         private void createAccount(string username, string password)
 		{
             //Create userID hash
-            string user_ID_Hash = getHash(username, password);
+            string user_ID_Hash = createHash(username, password);
 
-            tool.add_New_User_Data(username, EncodePasswordToBase64(password));
+            tool.add_New_User_Data(username, createHash(username, password));
             MessageBox.Show("Account creation successful!");
 
             //Get this User_ID
@@ -282,13 +282,187 @@ namespace NEA_Project
 
         }
 
-        private string getHash(string username, string password)
+        //Creates a unique composite hash using both the username and password.
+        private string createHash(string username, string password)
 		{
-            return "t";
+            string longString;
+            string shortString;
+            string passAndUser = username + password;
 
-            //Sets l to the length of the longest string.
-            
-		}
+            if (username.Length > password.Length)
+            {
+                longString = username;
+                shortString = password;
+            }
+            else
+            {
+                longString = password;
+                shortString = username;
+            }
+
+            LinkedList<char> charList = new LinkedList<char>();
+
+            int i;
+            for (i = 0; i < shortString.Length; i++)
+            {
+                charList.AddLast(shortString[i]);
+                charList.AddLast(longString[i]);
+            }
+
+            for (i = i; i < longString.Length; i++)
+            {
+                //If i is even.
+                if (i % 2 == 0)
+                {
+                    charList.AddFirst(longString[i]);
+                }
+                else
+                {
+                    charList.AddLast(longString[i]);
+                }
+            }
+
+            //Contains the binary eqiuvilent of each character in the charList
+            string[] toHash = new string[charList.Count()];
+
+            //Contains the binary equivilent of each character in both the username and password.
+            string[] key = new string[charList.Count()];
+
+            //Contains the result of the XOR function.
+            string[] hash = new string[charList.Count()];
+
+            int d = 0;
+            int maxLength = 0;
+            foreach (char c in charList)
+            {
+                toHash[d] = Convert.ToString(c, 2);
+                if (toHash[d].Length > maxLength)
+                {
+                    maxLength = toHash[d].Length;
+                }
+                d++;
+            }
+
+            d = 0;
+            foreach (char c in passAndUser)
+            {
+                key[d] = Convert.ToString(c, 2);
+                if (key[d].Length > maxLength)
+                {
+                    maxLength = toHash[d].Length;
+                }
+                d++;
+            }
+
+            toHash = increaseLength(toHash, maxLength);
+            key = increaseLength(key, maxLength);
+
+            //XOR the two values.
+            int counter = 0;
+            foreach (string binaryString in toHash)
+            {
+                hash[counter] = XOR(binaryString, key[counter]);
+                counter++;
+            }
+
+            d = 0;
+            maxLength = 0;
+            foreach (string c in hash)
+            {
+                hash[d] = Convert.ToString(binaryToDenary(c), 16);
+                if (hash[d].Length > maxLength)
+                {
+                    maxLength = hash[d].Length;
+                }
+                d++;
+            }
+
+            hash = increaseLength(hash, maxLength);
+
+            string finalHash = "";
+            foreach (string c in hash)
+            {
+                finalHash += c;
+            }
+
+            return finalHash;
+        }
+
+        private int binaryToDenary(string binary)
+        {
+            int denary = 0;
+            double num = 0;
+
+            for (int i = 0; i < binary.Length; i++)
+            {
+                if (binary[i] == '1')
+                {
+                    num += Math.Pow(2, i);
+                }
+            }
+
+            //It's more efficient to use a double and during the for statement, and convert to int afterwards than it would be to use an int,
+            //and therefore convert to an int each time it loops
+            denary = Convert.ToInt32(num);
+
+            return denary;
+        }
+
+        private string XOR(string str, string key)
+        {
+
+            string result = "";
+            for (int i = 0; i < str.Length; i++)
+            {
+                switch (str[i])
+                {
+                    case '0':
+                        switch (key[i])
+                        {
+                            case '0':
+                                result += '0';
+                                break;
+                            case '1':
+                                result += '1';
+                                break;
+                        }
+                        break;
+
+                    case '1':
+                        switch (key[i])
+                        {
+                            case '0':
+                                result += '1';
+                                break;
+                            case '1':
+                                result += '0';
+                                break;
+                        }
+                        break;
+                }
+            }
+
+
+            return result;
+        }
+
+        private static string[] increaseLength(string[] toLengthen, int requiredLength)
+        {
+            for (int i = 0; i < toLengthen.Length; i++)
+            {
+                while (toLengthen[i].Length < requiredLength)
+                {
+                    toLengthen[i] = toLengthen[i] + (i % 2);
+                }
+            }
+
+            return toLengthen;
+        }
+
+
+
+
+
 
         //Temp encoding function
         private string EncodePasswordToBase64(string password)
