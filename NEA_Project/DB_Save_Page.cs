@@ -167,26 +167,56 @@ namespace NEA_Project
 					if (!isBlack(bitmapToCompress.GetPixel(x, y)))
 					{
 						colour = "0";
+						amountOfRepeats++;
+
+						//Continue until a pixel is black.
+						do
+						{
+							amountOfRepeats++;
+							x++;
+
+							//Check if we have reached the end of a line but not the end of the file.
+							if (x == bitmapToCompress.Width)
+							{
+								if (y == bitmapToCompress.Height - 1)
+								{
+									amountOfRepeats--;
+									break;
+								}
+								amountOfRepeats--;
+								newline = "1";
+								break;
+							}
+						}
+						while (!isBlack(bitmapToCompress.GetPixel(x, y)));
 					}
 					else
 					{
 						colour = "1";
-					}
-
-					do
-					{
 						amountOfRepeats++;
-						x++;
-
-						//Check if we have reached the end of a line.
-						if (x == bitmapToCompress.Width)
+						do
 						{
-							newline = "1";
-							break;
+							amountOfRepeats++;
+							x++;
+
+							//Check if we have reached the end of a line but not the end of the file.
+							if (x == bitmapToCompress.Width)
+							{
+								if (y == bitmapToCompress.Height - 1)
+								{
+									amountOfRepeats--;
+									break;
+								}
+								amountOfRepeats--;
+								newline = "1";
+								break;
+							}
 						}
+						while (isBlack(bitmapToCompress.GetPixel(x, y)));
 					}
-					while (!isBlack(bitmapToCompress.GetPixel(x, y)));
+
 					tempBinaryHolder.AddLast($"{convertToBinary(amountOfRepeats)}{colour}{newline}");
+					Console.WriteLine(amountOfRepeats);
 				}
 			}
 
@@ -194,27 +224,10 @@ namespace NEA_Project
 
 			//Add the width and height values to start of the compressed binary string.
 			//This is less time efficent then just storing these values in the compression string, but it is more space efficient.
-			string width = convertToBinary(bitmapToCompress.Width);
-			string height = convertToBinary(bitmapToCompress.Height);
-			int len = 0;
+			int width = bitmapToCompress.Width;
+			int height = bitmapToCompress.Height;
 
-
-			while (width.Length > height.Length)
-			{
-				len = width.Length;
-				height = "0" + height;
-			}
-
-			while (height.Length > width.Length)
-			{
-				len = height.Length;
-				width = "0" + width;
-			}
-
-			bitmapAsCompressedBinary += width + height;
-
-			compressionString += len;
-			Loading_Bar.Increment(1);
+			compressionString += width + "_" + height;
 
 			//Find the longest binary string, and add 0s to all the other strings so they are the same standard length.
 			int maxLength = 0;
@@ -248,6 +261,9 @@ namespace NEA_Project
 
 			Loading_Bar.Increment(1);
 			compressionString += "_" + Convert.ToString(maxLength);
+
+			Console.WriteLine(bitmapAsCompressedBinary);
+
 			return bitmapAsCompressedBinary;
 		}
 

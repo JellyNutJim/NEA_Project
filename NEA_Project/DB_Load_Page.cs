@@ -108,6 +108,7 @@ namespace NEA_Project
 						Bitmap decompressedImage = decompressImage(fileAndCompressionString[0], fileAndCompressionString[1]);
 						ImageDisplay.Image = decompressedImage;
 						ImageDisplay.BringToFront();
+						ImageDisplay.SizeMode = PictureBoxSizeMode.Zoom;
 						comboReturn.Text = "Single image";
 						Close();
 					} 
@@ -126,91 +127,97 @@ namespace NEA_Project
 
 		private Bitmap decompressImage(string img, string compresionString)
 		{
+			Console.WriteLine(img);
+
 			//Get the important value from the compression string.
 			//The length of the width/height binary strings.
 			//And the length of the colour binary strings.
-			string whLength = "";
-			string cbLength = "";
-			bool wh = true;
+			string imgWidth = "";
+			string imgHeight = "";
+			string sequenceLength = "";
 
+			//Represents what part of the compression string is currently being accesed.
+			int compressionStringComponent = 1;
+
+			//Get the following values from the compression string:
+			// The width of the image
+			// The height of the image
+			// The max length of each pixel binary sequence
 			for (int i = 0; i < compresionString.Length; i++)
 			{
+				//When a '_' is found, we know the end of a number has been reached.
 				if (compresionString[i] == '_')
 				{
-					wh = false;
-					continue;
-				}
-
-				if (wh)
-				{
-					whLength += compresionString[i];
+					compressionStringComponent += 1;
 				}
 				else
 				{
-					cbLength += compresionString[i];
+					switch (compressionStringComponent)
+					{
+						case 1:
+							imgWidth += compresionString[i];
+							break;
+						case 2:
+							imgHeight += compresionString[i];
+							break;
+						case 3:
+							sequenceLength += compresionString[i];
+							break;
+					}
 				}
 			}
 
-			Console.WriteLine("whlength: " + whLength + " cbWidth: " + cbLength);
+			//Display split compression string.
+			//Console.WriteLine("width: " + imgWidth + " height: " + imgHeight + " length: " + sequenceLength);
 
-			//Get width and height of the bitmap and create a new bitmap of that size.
-			string width = "";
-			string height = "";
-
-			int whLength_Int = Convert.ToInt32(whLength);
-
-			for (int i = 0; i < whLength_Int; i++)
-			{
-				width += img[i];
-			}
-
-			for (int i = whLength_Int; i < whLength_Int * 2; i++)
-			{
-				height += img[i];
-			}
-
-			Console.WriteLine("Width: " + width + " height: " + height);
-			Console.WriteLine("Width: " + binaryToDenary(width) + " height: " + binaryToDenary(height));
-
-			Bitmap mapToDraw = new Bitmap(binaryToDenary(width), binaryToDenary(height));
-
-
+			//Define imgHeight, imgWidth and sequenceLength as integers.
 			//Get the length of a colour group, and then use this to decoded the binary sequence.
-
-			int binary_Length = binaryToDenary(cbLength);
-			int counter = 1;
-			int newline = 0;
-			int colour = 0;
+			string amountOfPixels = "";
+			int width = Convert.ToInt32(imgWidth);
+			int height = Convert.ToInt32(imgHeight);
+			int binary_Length = Convert.ToInt32(sequenceLength);
+			int sequencePosition = 0;
+			char newline;
+			char colour;
 			y = 0;
 			x = 0;
 
-			string amountOfPixels = "";
+			Console.WriteLine(binary_Length + " ------------------------------");
 
-			for (int i = whLength_Int * 2; i < img.Length; i++)
+			//Create a new bitmap of the correct size.
+			Bitmap mapToDraw = new Bitmap(width, height);
+
+
+			for (int i = 0; i < img.Length / binary_Length; i++)
 			{
-				counter++;
-				if (counter <= binary_Length - 2)
+				//Represents a small length of binary that includes the length of a repeated colour, the colour and whether its a new line.
+				string sequence = "";
+				amountOfPixels = "";
+				for (int p = 0; p < binary_Length; p++)
 				{
-					amountOfPixels += img[i];
+					sequence += img[sequencePosition];
+					sequencePosition++;
 				}
-				else if (counter <= binary_Length - 1)
-				{
-					colour = img[i];
-				}
-				else
-				{
-					newline = img[i];
-					counter = 1;
-					addPixels(mapToDraw, binaryToDenary(amountOfPixels), colour, newline);
 
-					amountOfPixels = "";
-					counter = 1;
+				//Define the sequences colour and whether its the end of a line.
+				newline = sequence[binary_Length - 1];
+				colour = sequence[binary_Length - 2];
+
+				//Define the amount of pixels to be drawn.
+				for (int a = 0; a < binary_Length - 2; a++)
+				{
+					amountOfPixels += sequence[a];
 				}
+
+				//Console.WriteLine("num of px: " + binaryToDenary(amountOfPixels));
+
+				Console.WriteLine("Len: " + binaryToDenary(amountOfPixels) + " Colour: " + colour + " NewLine: " + newline);
+
+				mapToDraw = addPixels(mapToDraw, binaryToDenary(amountOfPixels), colour, newline);
 			}
 
-			Console.WriteLine("yes4");
-
 			return mapToDraw;
+			
 		}
 
 		private string decompressText(string text, string compressionString)
@@ -270,14 +277,13 @@ namespace NEA_Project
 				}
 			}
 
-			Console.WriteLine(decompressedText);
 			return decompressedText;
 		}
 
-		private void addPixels(Bitmap bm, int amountToAdd, int colourInt, int newline)
+		private Bitmap addPixels(Bitmap bm, int amountToAdd, char colourChar, char newline)
 		{
 			Color colour;
-			if (colourInt == 0)
+			if (colourChar == '1')
 			{
 				colour = Color.FromArgb(255, 0, 0, 0);
 			}
@@ -293,27 +299,35 @@ namespace NEA_Project
 				x++;
 			}
 
-			if (newline == 1)
+			if (newline == '1')
 			{
 				y++;
+				x = 0;
 			}
 
+			return bm;
 		}
 
 		//Converts a binary sequence into a denary integer.
 		private int binaryToDenary(string binary)
 		{
+			string reversedBinary = "";
+			for (int i = 0; i < binary.Length; i++)
+			{
+				reversedBinary += binary[binary.Length - 1 - i];
+			}
+
 			int denary = 0;
 			double num = 0;
 
-			for (int i = 0; i < binary.Length; i++)
+			for (int i = 0; i < reversedBinary.Length; i++)
 			{
-				if (binary[i] == '1')
+				if (reversedBinary[i] == '1')
 				{
 					num += Math.Pow(2, i);
 				}
 			}
-			
+
 			//It's more efficient to use a double and during the for statement, and convert to int afterwards than it would be to use an int,
 			//and therefore convert to an int each time it loops
 			denary = Convert.ToInt32(num);
