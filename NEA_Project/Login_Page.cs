@@ -16,26 +16,28 @@ namespace NEA_Project
 {
     public partial class login_page : Form
     {
-        DBTool tool;
+        private DBTool tool;
+        private int fails;
 
         public login_page()
         {
-            Main_Page mp = new Main_Page(9);
+            Main_Page mp = new Main_Page(12);
             mp.Show();
 
-            DB_Save_Page dp = new DB_Save_Page("This is a test", 9);
+            DB_Save_Page dp = new DB_Save_Page("This is a test", 12);
             dp.Show();
 
             InitializeComponent();
             tool = new DBTool();
+            fails = 0;
         }
 
         //Checks if the users log in details are corrrect, and then forwards them to the main page.
         public void Login_Btn_Click(object sender, EventArgs e)
         {
             //Get user entered values.
-            String attemptedUserName = userNameEntry.Text;
-            String attemptedPassword = passwordEntry.Text;
+            String attemptedUserName = user_Name_Entry.Text;
+            String attemptedPassword = password_Entry.Text;
             bool userExists = false;
 
             if (attemptedUserName == "" || attemptedPassword == "")
@@ -44,63 +46,65 @@ namespace NEA_Project
 			}
 			else
 			{
-                //Checks if the login credentials meet the basic format requirements.
-                //This is the first check we do, because if this check fails then the database does not have to be opened for no reason.
-                if (usernameFormatCheck(attemptedUserName) && passwordFormatCheck(attemptedPassword))
+                //Gets each user name present in the User_Data table.
+                //The attempted username is then compared agaisnt these to check if it exists.
+                foreach (string user_Name in tool.check_Table_For_Values())
                 {
-                    //Gets each user name present in the User_Data table.
-                    //The attempted username is then compared agaisnt these to check if it exists.
-                    foreach (string user_Name in tool.check_Table_For_Values())
+                    if (attemptedUserName == user_Name)
                     {
-                        if (attemptedUserName == user_Name)
-                        {
-                            userExists = true;
-                            break;
-                        }
+                        userExists = true;
+                        break;
                     }
+                }
 
-                    //Attempted username is present.
-                    if (userExists)
+                //Attempted username is present.
+                if (userExists)
+                {
+                    //Create unique hash for the user.
+                    string attemptedHash = createHash(attemptedUserName, attemptedPassword);
+
+                    //Get users encrypted password.
+                    string user_Actual_Hash = tool.get_String_From_Table(attemptedUserName);
+
+                    //Compares the password the user entered to the one stored within the database.
+                    //The "fail" is returned whenever the database was unable to retrieve the account details.
+                    if (attemptedHash == user_Actual_Hash)
                     {
-                        //Encrypt password
-                        attemptedPassword = createHash(attemptedUserName, attemptedPassword);
+                        //The correct login details have been entered.
+                        //We can now load the User_ID and open the main page.
 
-                        //Get users encrypted password.
-                        string user_Actual_Password = tool.get_String_From_Table(attemptedUserName);
+                        int User_ID = Convert.ToInt32(tool.get_Int_From_Table(attemptedUserName));
+                        Console.WriteLine("The users User_Id is:\n" + User_ID);
 
-                        //Compares the password the user entered to the one stored within the database.
-                        //The "fail" is returned whenever the database was unable to retrieve the account details.
-                        if (attemptedPassword == user_Actual_Password)
-                        {
-                            //The correct login details have been entered.
-                            //We can now load the User_ID and open the main page.
-
-                            int User_ID = Convert.ToInt32(tool.get_Int_From_Table(attemptedUserName));
-
-                            this.Hide();
-                            Main_Page mp = new Main_Page(User_ID);
-                            mp.Show();
-                            MessageBox.Show("Login  Successful");
-                        }
-                        else if (user_Actual_Password == "fail")
-                        {
-                            MessageBox.Show("Account does not exist");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Incorrect Password");
-                        }
+                        this.Hide();
+                        Main_Page mp = new Main_Page(User_ID);
+                        mp.Show();
+                        MessageBox.Show("Login  Successful");
+                    }
+                    else if (user_Actual_Hash == "fail")
+                    {
+                        fails += 1;
+                        MessageBox.Show("Account does not exist");
                     }
                     else
                     {
-                        MessageBox.Show("This account does not exist.");
+                        fails += 1;
+                        MessageBox.Show("Incorrect Password");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Login credentials are not in the correct format");
+                    fails += 1;
+                    MessageBox.Show("This account does not exist.");
                 }
-            }  
+            }
+
+            if (fails >= 5)
+            {
+                MessageBox.Show("Too many failed log in attempts, please try again later.");
+                Application.Exit();
+            }
+
         }
 
         //Function called when a new account creation is requested.
@@ -108,8 +112,8 @@ namespace NEA_Project
         private void createAccount_Btn_Click(object sender, EventArgs e)
         {
             //Get user entered values.
-            String requestedUserName = userNameEntry.Text;
-            String requestedPassword = passwordEntry.Text;
+            String requestedUserName = user_Name_Entry.Text;
+            String requestedPassword = password_Entry.Text;
 
             if (requestedUserName == "" || requestedPassword == "")
 			{
@@ -225,6 +229,12 @@ namespace NEA_Project
                 errors += "Password must be at least 10 characters long\n";
             }
 
+            if (requestedPassword.Length > 64)
+			{
+                containsError = true;
+                errors += "Password cannot be longer than 64 characters";
+			}
+
             //Checks if password contains at least one capital letter.
             if (!(Regex.Match(requestedPassword, regexUpperCase).Success))
             {
@@ -256,7 +266,7 @@ namespace NEA_Project
             if (containsError)
 			{
                 //Format errors are present in the password, these errors are shown to the user.
-                MessageBox.Show($"Your password does not meet the following criteria:\n {errors}");
+                MessageBox.Show($"Your password does not meet the following criteria:\n{errors}");
                 return false;
 			}
 

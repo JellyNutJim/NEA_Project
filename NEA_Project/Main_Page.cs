@@ -89,17 +89,36 @@ namespace NEA_Project
 
                 Current_Status_Label.Visible = true;
                 Current_Status_Label.Text = "Loading...";
-                Loading_Bar.Maximum = 5;
-                Loading_Bar.Style = ProgressBarStyle.Blocks;
-                Loading_Bar.Value = 0;
+                Progress_Bar.Maximum = 5;
+                Progress_Bar.Style = ProgressBarStyle.Blocks;
+                Progress_Bar.Value = 0;
 
-				generalFunctions.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
-			}
+                Current_Status_Label.Text = "Loading image";
+                BackgroundEdit.InputImage = bitmappedImage;
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Loading Bar";
+                BackgroundEdit.loadingBar = Progress_Bar;
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Getting all Pixels";
+                BackgroundEdit.GetAllPixels();
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Increase HSB Values";
+                BackgroundEdit.HSBPixels();
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Setting new Pixels";
+                BackgroundEdit.SetAllPixels();
+                Progress_Bar.Increment(1);
+            }
 			else
 			{
 				//Display error to user.
 				Image_Error_Display.BringToFront();
 				Image_Error_Display.Text = "Please enter an image first";
+                MessageBox.Show("Please enter an image first");
 			}
 
 			//Gets the final image (with the removed backkground) and sets the Result_Img
@@ -116,9 +135,9 @@ namespace NEA_Project
             Result_Text_Display.SendToBack();
             Result_Text_Display.Text = "";
 
-            Loading_Bar.Maximum = 5;
-            Loading_Bar.Style = ProgressBarStyle.Blocks;
-            Loading_Bar.Value = 0;
+            Progress_Bar.Maximum = 5;
+            Progress_Bar.Style = ProgressBarStyle.Blocks;
+            Progress_Bar.Value = 0;
 
             createLetter tempLetters = split();
             if (tempLetters != null)
@@ -138,11 +157,22 @@ namespace NEA_Project
                 letters = tempLetters.letters;
                 LinkedList<Bitmap> drawletters = letters;
 
-                //Create an array of the linked list to display the spi
+                //Create an array of the linked list to display the split.
+                Bitmap[] letterArray = new Bitmap[letters.Count];
 
+                for (int i = 0; i < letterArray.Length; i++)
+                {
+                    letterArray[i] = letters.First();
+                    letters.RemoveFirst();
+                }
+
+                for (int i = 0; i < letterArray.Length; i++)
+                {
+                    letters.AddLast(letterArray[i]);
+                }
 
                 //Draw the new letters into the result picturebox.
-                /*int start = 0;
+                int start = 0;
                 using (Graphics g = Graphics.FromImage(allLetters))
                 {
                     for (int i = 0; i < length; i++)
@@ -151,13 +181,22 @@ namespace NEA_Project
                         start += drawletters.First.Value.Width;
                         drawletters.RemoveFirst();
                     }
-                }*/
+                }
+
+                for (int i = 0; i < letterArray.Length; i++)
+                {
+                    letters.AddLast(letterArray[i]);
+                }
 
                 Result_Img_Display.Image = allLetters;
                 Result_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
                 Current_Status_Label.Text = "Done!";
-                Select_Download_Type_CB.Text = "Multiple Imags";
-            }
+                Select_Download_Type_CB.Text = "Multiple Images";
+			}
+			else
+			{
+
+			}
         }
 
         //Called when the Convert to text button is selected.
@@ -267,7 +306,7 @@ namespace NEA_Project
 							{
                                 sw.WriteLine(Result_Text_Display.Text);
 							}
-
+                            MessageBox.Show("Download Successful");
                         }
                     }
                     else
@@ -325,7 +364,27 @@ namespace NEA_Project
                 Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
 
                 Current_Status_Label.Visible = true;
-                generalFunctions.RemoveBG(bitmappedImage, Loading_Bar, Current_Status_Label);
+
+                Current_Status_Label.Text = "Loading image";
+                BackgroundEdit.InputImage = bitmappedImage;
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Loading Bar";
+                BackgroundEdit.loadingBar = Progress_Bar;
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Getting all Pixels";
+                BackgroundEdit.GetAllPixels();
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Increase HSB Values";
+                BackgroundEdit.HSBPixels();
+                Progress_Bar.Increment(1);
+
+                Current_Status_Label.Text = "Setting new Pixels";
+                BackgroundEdit.SetAllPixels();
+                Progress_Bar.Increment(1);
+
 
                 //Splits image into chracters.
                 Bitmap image = new Bitmap(BackgroundEdit.finalImage);
@@ -338,6 +397,7 @@ namespace NEA_Project
                 //Occurs when no image is present in either the result or input picture box.
                 Image_Error_Display.BringToFront();
                 Image_Error_Display.Text = "Please enter an image first";
+                MessageBox.Show("Please enter an image first");
             }
 
             return null;

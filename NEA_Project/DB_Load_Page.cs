@@ -68,6 +68,8 @@ namespace NEA_Project
 		//Called when the load file button is clicked.
 		private void Load_File_Btn_Click(object sender, EventArgs e)
 		{
+			Console.WriteLine("Load_File_Btn_Click has been called");
+
 			//Gets the currently selected file based on what the user has currently highlighted on the File_Display_View.
 			//We get the selected name to know what file we should search for when querying the database.
 			//And we get the file type so we know what decompression algorithm to run, and how to return it to the main page.
@@ -213,6 +215,8 @@ namespace NEA_Project
 
 		private string decompressText(string text, string compressionString)
 		{
+			Console.WriteLine("Text: " + text);
+			Console.WriteLine("CS: " + compressionString);
 			string decompressedText = "";
 			LinkedList<string[]> letter_Data = new LinkedList<string[]>();
 			//Create huffman table.
@@ -266,6 +270,7 @@ namespace NEA_Project
 				}
 			}
 
+			Console.WriteLine(decompressedText);
 			return decompressedText;
 		}
 

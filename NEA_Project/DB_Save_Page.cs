@@ -122,8 +122,7 @@ namespace NEA_Project
 			//When compressing this image there are a few things to take into account.
 			// 1: It will be made up of only black and white pixels.
 			// 2: It will contain writing.
-			// 3: It will be a maxiumum of a 4k image.
-			// 4: It must be stored as a binary string.
+			// 3: It must be stored as a binary string.
 
 			//Taking all these factors into account I have decided to use a binary form of run length encoding.
 			//I beleive this to be the best option as im only dealing with two colours which can be easiliy represented with either a 1 or a 0.
@@ -155,6 +154,8 @@ namespace NEA_Project
 			//This is because it significantly reduces the speed of the program.
 			Loading_Bar.Increment(1);
 
+			//Checks each pixel along the x and y coordinates.
+			//Line by line.
 			for (int y = 0; y < bitmapToCompress.Height; y++)
 			{
 				for (int x = 0; x < bitmapToCompress.Width; x++)
@@ -491,6 +492,8 @@ namespace NEA_Project
 			//If the requested name matches a name aleady present, then return false, as a unique name is required to distinguish files.
 			foreach (string file_Name in tool.check_Table_For_Values($"SELECT File_Name FROM Saved_Files WHERE User_ID = {User_ID}"))
 			{
+				Console.WriteLine(file_Name);
+
 				if (name == file_Name)
 				{
 					MessageBox.Show("This file name already exists.\nPlease choose a different name.");

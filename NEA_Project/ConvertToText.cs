@@ -91,8 +91,8 @@ namespace NEA_Project
 				for (int x = 0; x < input_Image_Width; x++)
 				{
                     //Gets the color of a pixel at postion (x, y);
-                    Console.WriteLine(y + " " + input_Image_Height);
-                    Console.WriteLine(x + " " + input_Image_Width);
+                    //Console.WriteLine(y + " " + input_Image_Height);
+                    //Console.WriteLine(x + " " + input_Image_Width);
  					Color pixel = input_Image.GetPixel(x, y);
 
 					//If the pixel is black, then a new letter has been detected.

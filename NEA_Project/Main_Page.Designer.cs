@@ -46,7 +46,7 @@ namespace NEA_Project
 			this.DB_Tools_Label = new System.Windows.Forms.Label();
 			this.Save_To_DB_Btn = new System.Windows.Forms.Button();
 			this.Load_From_DB_Btn = new System.Windows.Forms.Button();
-			this.Loading_Bar = new System.Windows.Forms.ProgressBar();
+			this.Progress_Bar = new System.Windows.Forms.ProgressBar();
 			this.Progress_Bar_Label = new System.Windows.Forms.Label();
 			this.Current_Status_Label = new System.Windows.Forms.Label();
 			this.Result_Text_Display = new System.Windows.Forms.RichTextBox();
@@ -226,13 +226,13 @@ namespace NEA_Project
 			this.Load_From_DB_Btn.UseVisualStyleBackColor = true;
 			this.Load_From_DB_Btn.Click += new System.EventHandler(this.Load_From_DB_Btn_Click);
 			// 
-			// Loading_Bar
+			// Progress_Bar
 			// 
-			this.Loading_Bar.Location = new System.Drawing.Point(608, 403);
-			this.Loading_Bar.Name = "Loading_Bar";
-			this.Loading_Bar.Size = new System.Drawing.Size(171, 23);
-			this.Loading_Bar.TabIndex = 17;
-			this.Loading_Bar.Click += new System.EventHandler(this.progressBar1_Click);
+			this.Progress_Bar.Location = new System.Drawing.Point(608, 403);
+			this.Progress_Bar.Name = "Progress_Bar";
+			this.Progress_Bar.Size = new System.Drawing.Size(171, 23);
+			this.Progress_Bar.TabIndex = 17;
+			this.Progress_Bar.Click += new System.EventHandler(this.progressBar1_Click);
 			// 
 			// Progress_Bar_Label
 			// 
@@ -280,7 +280,7 @@ namespace NEA_Project
 			this.Controls.Add(this.Result_Text_Display);
 			this.Controls.Add(this.Current_Status_Label);
 			this.Controls.Add(this.Progress_Bar_Label);
-			this.Controls.Add(this.Loading_Bar);
+			this.Controls.Add(this.Progress_Bar);
 			this.Controls.Add(this.Load_From_DB_Btn);
 			this.Controls.Add(this.Save_To_DB_Btn);
 			this.Controls.Add(this.DB_Tools_Label);
@@ -327,7 +327,7 @@ namespace NEA_Project
         private System.Windows.Forms.Label DB_Tools_Label;
         private System.Windows.Forms.Button Save_To_DB_Btn;
         private System.Windows.Forms.Button Load_From_DB_Btn;
-        private System.Windows.Forms.ProgressBar Loading_Bar;
+        private System.Windows.Forms.ProgressBar Progress_Bar;
         private System.Windows.Forms.Label Progress_Bar_Label;
         private System.Windows.Forms.Label Current_Status_Label;
 		private System.Windows.Forms.RichTextBox Result_Text_Display;
