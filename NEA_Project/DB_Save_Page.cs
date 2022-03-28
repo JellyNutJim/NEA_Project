@@ -94,6 +94,8 @@ namespace NEA_Project
 						originalSizeInBits = Save_Image_Box.Size.Width * Save_Image_Box.Image.Width * 8 * 3;
 						compressedFileSizeInBits = FileInBinary.Length;
 
+						Loading_Bar.Increment(1);
+
 						//The compression string in this case, represents the length of one group of colours.
 
 						if (tool.add_New_File(User_ID, requestedFileName, "image", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
@@ -147,7 +149,7 @@ namespace NEA_Project
 
 			Bitmap bitmapToCompress = new Bitmap(imgToCompress);
 			LinkedList<String> tempBinaryHolder = new LinkedList<string>();
-			string bitmapAsCompressedBinary = "", colour = "", newline = "0";
+			string bitmapAsCompressedBinary = "", colour = "";
 			int amountOfRepeats = 0;
 
 			//The loading bar is not incremented during the while loop.
@@ -160,14 +162,12 @@ namespace NEA_Project
 			{
 				for (int x = 0; x < bitmapToCompress.Width; x++)
 				{
-					newline = "0";
 					amountOfRepeats = 0;
 
 					//Check for white groups. --> I check for white first as the majority of pixels will be white.
-					if (!isBlack(bitmapToCompress.GetPixel(x, y)))
+					if (y < bitmapToCompress.Height - 1 && !isBlack(bitmapToCompress.GetPixel(x, y)))
 					{
 						colour = "0";
-						amountOfRepeats++;
 
 						//Continue until a pixel is black.
 						do
@@ -175,48 +175,52 @@ namespace NEA_Project
 							amountOfRepeats++;
 							x++;
 
-							//Check if we have reached the end of a line but not the end of the file.
+							//Check if we have reached the end of a line.
 							if (x == bitmapToCompress.Width)
 							{
-								if (y == bitmapToCompress.Height - 1)
+								y++;
+								x = 0;
+								//Check if we have reached the end of a file.
+								if (y > bitmapToCompress.Height - 1)
 								{
-									amountOfRepeats--;
 									break;
 								}
-								amountOfRepeats--;
-								newline = "1";
-								break;
 							}
 						}
 						while (!isBlack(bitmapToCompress.GetPixel(x, y)));
+						x--;
 					}
-					else
+					else if (y < bitmapToCompress.Height - 1)
 					{
 						colour = "1";
-						amountOfRepeats++;
 						do
 						{
+
 							amountOfRepeats++;
 							x++;
 
-							//Check if we have reached the end of a line but not the end of the file.
+							//Check if we have reached the end of a line.
 							if (x == bitmapToCompress.Width)
 							{
-								if (y == bitmapToCompress.Height - 1)
+								y++;
+								x = 0;
+								//Check if we have reached the end of a file.
+								if (y > bitmapToCompress.Height - 1)
 								{
-									amountOfRepeats--;
 									break;
 								}
-								amountOfRepeats--;
-								newline = "1";
-								break;
 							}
 						}
 						while (isBlack(bitmapToCompress.GetPixel(x, y)));
+						x--;
 					}
 
-					tempBinaryHolder.AddLast($"{convertToBinary(amountOfRepeats)}{colour}{newline}");
-					Console.WriteLine(amountOfRepeats);
+					if (amountOfRepeats == 0)
+					{
+						break;
+					}
+
+					tempBinaryHolder.AddLast($"{convertToBinary(amountOfRepeats)}{colour}");
 				}
 			}
 

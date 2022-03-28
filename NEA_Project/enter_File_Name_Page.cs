@@ -26,9 +26,13 @@ namespace NEA_Project
 		//Called when the Entry  btn is clicked.
 		private void name_Entry_Btn_Click(object sender, EventArgs e)
 		{
+			Console.WriteLine("name_Entry_Btn_Click has been called");
+
 			//Get the filename from the textbox.
 			string requestedFileName = filename_Entry_TextBox.Text;
 			bool validName = true;
+
+			Console.WriteLine(requestedFileName);
 
 			//Check if the filename meets the correct format.
 			if (!generalFunctions.checkFileNameValid(requestedFileName))
@@ -36,10 +40,13 @@ namespace NEA_Project
 				validName = false;
 			}
 
+			Console.WriteLine("validName contains: " + validName);
+
 			//If the name is valed then define the invisisble label's text value to the requested filename.
 			if (validName)
 			{
 				Filename_Holder.Text = requestedFileName;
+				Console.WriteLine("Filename_Holder.text contains: " + Filename_Holder.Text);
 				Close();
 			}
 		}

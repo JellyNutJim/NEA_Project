@@ -121,7 +121,7 @@ namespace NEA_Project
 						ImageDisplay.BringToFront();
 						ImageDisplay.SizeMode = PictureBoxSizeMode.Zoom;
 
-						comboReturn.Text = "Single image";
+						comboReturn.Text = "Single Image";
 
 						Close();
 					} 
@@ -186,7 +186,7 @@ namespace NEA_Project
 			}
 
 			//Display split compression string for testing.
-			Console.WriteLine("width: " + imgWidth + " height: " + imgHeight + " length: " + sequenceLength);
+			//Console.WriteLine("width: " + imgWidth + " height: " + imgHeight + " length: " + sequenceLength);
 
 			//Convert the compression string values into integers.
 			//Get the length of a colour group, and then use this to decoded the binary sequence.
@@ -195,7 +195,6 @@ namespace NEA_Project
 			int height = Convert.ToInt32(imgHeight);
 			int binary_Length = Convert.ToInt32(sequenceLength);
 			int sequencePosition = 0;
-			char newline;
 			char colour;
 			y = 0;
 			x = 0;
@@ -222,23 +221,22 @@ namespace NEA_Project
 					sequencePosition++;
 				}
 
-				//Define the sequences colour and whether its the end of a line.
-				newline = chunk[binary_Length - 1];
-				colour = chunk[binary_Length - 2];
+				//Define the sequences colour.
+				colour = chunk[binary_Length - 1];
 				
 				//Define the amount of pixels to be drawn.
 				//The newline and colour bits occupy the final two diggits of the chunk, so we exlude these digits
 				//when getting the amount of pixels.
-				for (int a = 0; a < binary_Length - 2; a++)
+				for (int a = 0; a < binary_Length - 1; a++)
 				{
 					amountOfPixels += chunk[a];
 				}
 
-				Console.WriteLine("Len: " + binaryToDenary(amountOfPixels) + " Colour: " + colour + " NewLine: " + newline);
+				//Console.WriteLine("Len: " + binaryToDenary(amountOfPixels) + " Colour: " + colour);
 
 				//Now we have our seperated chunk, the addixels function is called, which adds the chunk to
 				//the bitmap.
-				mapToDraw = addPixels(mapToDraw, binaryToDenary(amountOfPixels), colour, newline);
+				mapToDraw = addPixels(mapToDraw, binaryToDenary(amountOfPixels), colour);
 			}
 
 			return mapToDraw;
@@ -306,7 +304,7 @@ namespace NEA_Project
 		}
 		
 		//Adds an amount of repeating pixels to a bitmap.
-		private Bitmap addPixels(Bitmap bm, int amountToAdd, char colourChar, char newline)
+		private Bitmap addPixels(Bitmap bm, int amountToAdd, char colourChar)
 		{
 			//Gets the colour of the pixel's based on whether colourChar is a '1' or '0'.
 			// '1' is black and '0' is white.
@@ -323,16 +321,14 @@ namespace NEA_Project
 			//Draws the pixels on the bitmap, incrementing the x value each time.
 			for (int i = 0; i < amountToAdd; i++)
 			{
+
 				bm.SetPixel(x, y, colour);
 				x++;
-			}
-
-			//The y value is then incremented if this chunk has a '1' newline value.
-			//The '1' means that this chunk goes to the end of a line.
-			if (newline == '1')
-			{
-				y++;
-				x = 0;
+				if (x == bm.Width)
+				{
+					x = 0;
+					y++;
+				}
 			}
 
 			return bm;

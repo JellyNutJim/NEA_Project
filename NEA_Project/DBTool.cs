@@ -68,7 +68,7 @@ namespace NEA_Project
 		}
 
 		//By default, this function returns the password for a specfic username, but it can also any other string from any table.
-		public string get_String_From_Table(string commanValue, string query = "SELECT User_Hash FROM User_Data WHERE User_Name = @commanValueToEnter;")
+		public string get_String_From_Table(string commanValue, string query = "SELECT User_Hash FROM User_Data WHERE User_Name = @commaoValueToEnter;")
 		{
 			string fetchedData = "";
 
@@ -81,7 +81,7 @@ namespace NEA_Project
 					//I am using the addwithvalue function to input certain values into the query.
 					//While I could have simply placed theses values into the original query string, it would not have had SQL injection protection.
 					//Substitution is a lot safer and less prone to being attacked.
-					command.Parameters.AddWithValue("@commanValueToEnter", commanValue);
+					command.Parameters.AddWithValue("@commonValueToEnter", commanValue);
 
 					connection.Open();
 					using (SqlDataReader reader = command.ExecuteReader())
