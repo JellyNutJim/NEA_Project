@@ -78,7 +78,9 @@ namespace NEA_Project
 
 			//Get the file binary and compression string.
 			string[] fileAndCompressionString = tool.get_Saved_File(User_ID, selectedName);
-
+			
+			//A different decompression method must be used for different filetypes,
+			//So a switch case statement is used to call the correct decompression algorithm.
 			switch (selectedFileType)
 			{
 				case "text":
@@ -90,11 +92,17 @@ namespace NEA_Project
 						//Assign the text_Diplay form element on the main page to the now decompressed string.
 						TextDisplay.Text = decompressedText;
 						TextDisplay.BringToFront();
+
+						//As we are loading a text file, it is likely that the user will want to download,
+						//said text file. And therfore we can set the combo box option to be "text file"
 						comboReturn.Text = "Text File";
 
 						//Close the load page display.
 						Close();
 					}
+					//If the algorithm for whatever reason is unable to decompress the text,
+					//this could be due to a corrupt compression string, then the following
+					//catch statement will run and display an error  message.
 					catch (Exception ex)
 					{
 						Console.WriteLine(ex);
@@ -105,11 +113,16 @@ namespace NEA_Project
 				case "image":
 					try
 					{
+						//Create a new bitmap to contain the decompressed image.
 						Bitmap decompressedImage = decompressImage(fileAndCompressionString[0], fileAndCompressionString[1]);
+
+						//Set the image display (defined by the constructor) to the new bitmap.
 						ImageDisplay.Image = decompressedImage;
 						ImageDisplay.BringToFront();
 						ImageDisplay.SizeMode = PictureBoxSizeMode.Zoom;
+
 						comboReturn.Text = "Single image";
+
 						Close();
 					} 
 					catch (Exception exc)
@@ -117,7 +130,6 @@ namespace NEA_Project
 						Console.WriteLine(exc);
 						MessageBox.Show("File could not be loaded");
 					}
-
 					break;
 
 				default:
@@ -125,13 +137,11 @@ namespace NEA_Project
 			}
 		}
 
+		//This function accepts a binary sequence, representing an image, and a compression string.
 		private Bitmap decompressImage(string img, string compresionString)
 		{
-			Console.WriteLine(img);
 
-			//Get the important value from the compression string.
-			//The length of the width/height binary strings.
-			//And the length of the colour binary strings.
+			//Define the metadata in the compression string.
 			string imgWidth = "";
 			string imgHeight = "";
 			string sequenceLength = "";
@@ -143,6 +153,14 @@ namespace NEA_Project
 			// The width of the image
 			// The height of the image
 			// The max length of each pixel binary sequence
+
+			//If the compression string is 123_321_10, then the width height and max length variables would be set to the following:
+			// width = 123
+			// height = 321
+			// max length = 10
+
+			//The following for loop seperates the compresion string into these variables.
+
 			for (int i = 0; i < compresionString.Length; i++)
 			{
 				//When a '_' is found, we know the end of a number has been reached.
@@ -167,10 +185,10 @@ namespace NEA_Project
 				}
 			}
 
-			//Display split compression string.
-			//Console.WriteLine("width: " + imgWidth + " height: " + imgHeight + " length: " + sequenceLength);
+			//Display split compression string for testing.
+			Console.WriteLine("width: " + imgWidth + " height: " + imgHeight + " length: " + sequenceLength);
 
-			//Define imgHeight, imgWidth and sequenceLength as integers.
+			//Convert the compression string values into integers.
 			//Get the length of a colour group, and then use this to decoded the binary sequence.
 			string amountOfPixels = "";
 			int width = Convert.ToInt32(imgWidth);
@@ -182,37 +200,44 @@ namespace NEA_Project
 			y = 0;
 			x = 0;
 
-			Console.WriteLine(binary_Length + " ------------------------------");
-
-			//Create a new bitmap of the correct size.
+			//Create a new bitmap of the correct size using the compression string ints.
 			Bitmap mapToDraw = new Bitmap(width, height);
 
-
+			//Split the binary img into chunks using a for loop.
+			//Each chunk represents one colour sequence.
+			//This sequence contains the colour, how many pixels of that colour need to be drawn,
+			//and whether this sequence runs to the end of a line.
 			for (int i = 0; i < img.Length / binary_Length; i++)
 			{
-				//Represents a small length of binary that includes the length of a repeated colour, the colour and whether its a new line.
-				string sequence = "";
+				string chunk = "";
+
+				//Represents the amount of pixels that need to be drawn of a specific colour.
 				amountOfPixels = "";
+
+				//The length of one chunk is equal to binary_Length,
+				//So we can select that many characters from the img binary string to obtain one chunk.
 				for (int p = 0; p < binary_Length; p++)
 				{
-					sequence += img[sequencePosition];
+					chunk += img[sequencePosition];
 					sequencePosition++;
 				}
 
 				//Define the sequences colour and whether its the end of a line.
-				newline = sequence[binary_Length - 1];
-				colour = sequence[binary_Length - 2];
-
+				newline = chunk[binary_Length - 1];
+				colour = chunk[binary_Length - 2];
+				
 				//Define the amount of pixels to be drawn.
+				//The newline and colour bits occupy the final two diggits of the chunk, so we exlude these digits
+				//when getting the amount of pixels.
 				for (int a = 0; a < binary_Length - 2; a++)
 				{
-					amountOfPixels += sequence[a];
+					amountOfPixels += chunk[a];
 				}
-
-				//Console.WriteLine("num of px: " + binaryToDenary(amountOfPixels));
 
 				Console.WriteLine("Len: " + binaryToDenary(amountOfPixels) + " Colour: " + colour + " NewLine: " + newline);
 
+				//Now we have our seperated chunk, the addixels function is called, which adds the chunk to
+				//the bitmap.
 				mapToDraw = addPixels(mapToDraw, binaryToDenary(amountOfPixels), colour, newline);
 			}
 
@@ -279,9 +304,12 @@ namespace NEA_Project
 
 			return decompressedText;
 		}
-
+		
+		//Adds an amount of repeating pixels to a bitmap.
 		private Bitmap addPixels(Bitmap bm, int amountToAdd, char colourChar, char newline)
 		{
+			//Gets the colour of the pixel's based on whether colourChar is a '1' or '0'.
+			// '1' is black and '0' is white.
 			Color colour;
 			if (colourChar == '1')
 			{
@@ -292,13 +320,15 @@ namespace NEA_Project
 				colour = Color.FromArgb(255, 255, 255, 255);
 			}
 
-
+			//Draws the pixels on the bitmap, incrementing the x value each time.
 			for (int i = 0; i < amountToAdd; i++)
 			{
 				bm.SetPixel(x, y, colour);
 				x++;
 			}
 
+			//The y value is then incremented if this chunk has a '1' newline value.
+			//The '1' means that this chunk goes to the end of a line.
 			if (newline == '1')
 			{
 				y++;
@@ -328,15 +358,16 @@ namespace NEA_Project
 				}
 			}
 
-			//It's more efficient to use a double and during the for statement, and convert to int afterwards than it would be to use an int,
+			//It's more efficient to use a double and during the for statement, 
+			//and convert to int afterwards than it would be to use an int,
 			//and therefore convert to an int each time it loops
 			denary = Convert.ToInt32(num);
 
 			return denary;
 		}
-
 	}
 
+	//A custom datatype that will contain information from Saved_File entrys from the Saved_Files data table. 
 	class Saved_File_Data
 	{
 		public string file_Name;

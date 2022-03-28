@@ -292,8 +292,6 @@ namespace NEA_Project
 			return false;
 		}
 
-
-
 		// ----------------------------------------------------------------------------------------------------------------------------------------- Text Compression
 
 		//I will be using a huffman table/compresion algorithm to compress my text.
