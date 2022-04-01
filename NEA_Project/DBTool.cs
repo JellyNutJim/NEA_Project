@@ -207,7 +207,7 @@ namespace NEA_Project
 		
 		//This function will return the general data about files linked to a specific user.
 		//The data returned does not include the contents of the file of the compression string used to decompress that file.
-		public LinkedList<Saved_File_Data> get_All_Files(int User_ID)
+		public LinkedList<SavedFileData> get_All_Files(int User_ID)
 		{
 			//The SQL query.
 			string query = "SELECT File_Name, File_Type, Compressed_File_Size, Date_Of_Creation FROM Saved_Files WHERE User_ID = @UserID";
@@ -215,7 +215,7 @@ namespace NEA_Project
 			//At his point during the execution of the function the amount of files this specific user has is unkown.
 			//Therefore I am using a linked list as it is a dynamic data type that can increase in size with each
 			//piece of file data added.
-			LinkedList<Saved_File_Data> data = new LinkedList<Saved_File_Data>();
+			LinkedList<SavedFileData> data = new LinkedList<SavedFileData>();
 			
 			//Create a connect and created a new command object.
 			using (connection = new SqlConnection(connectionString))
@@ -243,7 +243,7 @@ namespace NEA_Project
 							DateTime DOC = reader.GetDateTime(3);
 							
 							//Create a new Saved_File_Data object and add it to the end of the linked list.
-							data.AddLast(new Saved_File_Data(File_Name, File_Type, C_File_Size, DOC));
+							data.AddLast(new SavedFileData(File_Name, File_Type, C_File_Size, DOC));
 						}
 						reader.Close();
 					}

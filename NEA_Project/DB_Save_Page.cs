@@ -74,6 +74,41 @@ namespace NEA_Project
 						originalSizeInBits = Save_Text_Box.Text.Length * 8;
 						compressedFileSizeInBits = FileInBinary.Length;
 
+						//Write the compressed binary and the compression string to the console for testing.
+						int p = 0;
+						Console.WriteLine("Binary String: ");
+						foreach (char c in FileInBinary)
+						{
+							p++;
+							Console.Write(c);
+							//Move to a new line every 65 characters.
+							//This is done to make the string more readable.
+							if (p >= 65)
+							{
+								Console.Write("\n");
+								p = 0;
+							}
+						}
+						p = 0;
+						Console.WriteLine("\nCompression String: ");
+						foreach (char c in compressionString)
+						{
+							if (c == '\'')
+							{
+								p += 1;
+							}
+
+							//Move on to a new line every 5 unique letters.
+							//This is done to make the string more readable.
+							if (p > 4)
+							{
+								Console.Write("\n");
+								p = 0;
+							}
+
+							Console.Write(c);
+						}
+
 						//The add_New_File function returns a bool bassed on whether the query was completed successfully.
 						if (tool.add_New_File(User_ID, requestedFileName, "text", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
 						{
@@ -266,7 +301,20 @@ namespace NEA_Project
 			Loading_Bar.Increment(1);
 			compressionString += "_" + Convert.ToString(maxLength);
 
-			Console.WriteLine(bitmapAsCompressedBinary);
+			Console.WriteLine("Compressed binary: ");
+
+			int p = 0;
+			foreach (char c in bitmapAsCompressedBinary)
+			{
+				p++;
+				Console.Write(c);
+				if (p >= 65)
+				{
+					Console.Write("\n");
+					p = 0;
+				}
+			}
+			Console.WriteLine("\nCompression String: " + compressionString);
 
 			return bitmapAsCompressedBinary;
 		}
@@ -315,6 +363,26 @@ namespace NEA_Project
 			//Populate the linked list with every unique character and its frequency in textToCompress.
 			foreach (char letter in textToCompress)
 			{
+				/*
+				Used for testing the letter exists function.
+
+				Console.WriteLine("Original linked list: ");
+				foreach (letterData l in test)
+				{
+					Console.WriteLine("Char: " + l.Character + " Freq: " + l.Frequency);
+				}
+
+				bool test2 = letterExists(test, 'a');
+
+				Console.WriteLine("\nAfter the function was called: ");
+				foreach (letterData l in test)
+				{
+					Console.WriteLine("Char: " + l.Character + " Freq: " + l.Frequency);
+				}
+
+				Console.WriteLine("\nReturned value: " + test2);
+				*/
+
 				//The letter exists function returns a bool. If it returns false, then a new letter is added.
 				//If the letter already exists then find that letter and increase the frequency by one.
 				if (!letterExists(letterAndFreq, letter))
@@ -331,8 +399,20 @@ namespace NEA_Project
 			//The following code involes using a bubble sort.
 			LinkedList<letterData> sortedData = new LinkedList<letterData>();
 			LinkedList<letterData> letterBinary = new LinkedList<letterData>();
+
+			foreach (letterData d in letterAndFreq)
+			{
+				Console.WriteLine("Freq: " + d.Frequency + " Char: " + d.Character);
+			}
+
 			sortedData = bubbleSort(letterAndFreq);
 			Loading_Bar.Increment(1);
+
+			Console.WriteLine("After sort:\n ");
+			foreach (letterData d in sortedData)
+			{
+				Console.WriteLine("Freq: " + d.Frequency + " Char: " + d.Character);
+			}
 
 			int len = sortedData.Count();
 

@@ -21,18 +21,19 @@ namespace NEA_Project
 
         public login_page()
         {
-            /*
+            
             Main_Page mp = new Main_Page(12);
             mp.Show();
-
+            
             DB_Save_Page dp = new DB_Save_Page("This is a test", 12);
             dp.Show();
-            */
+            
 
             InitializeComponent();
             tool = new DBTool();
             fails = 0;
         }
+
 
         //Checks if the users log in details are corrrect, and then forwards them to the main page.
         public void Login_Btn_Click(object sender, EventArgs e)
