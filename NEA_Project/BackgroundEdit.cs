@@ -50,11 +50,15 @@ namespace NEA_Project
 		{
 			pixels = new Color[imageArea];
 			int i = 0;
-
+			
+			//The image is searched row by row, the y represent the current row, and the x representing
+			//the current position on a row.
+			//The x and y values can also be used to access specific pixels within the image.
 			for (int y = 0; y < imageHeight; y++)
 			{
 				for (int x = 0; x < imageWidth; x++, i++)
 				{
+					//Each pixel is added to the pixel array. (A pixel is just a colour)
 					pixels[i] = inputImage.GetPixel(x, y);
 				}
 			}
@@ -70,7 +74,9 @@ namespace NEA_Project
 			finalImage = new Bitmap(imageWidth, imageHeight);
 
 			int i = 0;
-
+			
+			//Functions in a very similar way to the GetAllPixels function, expect this time the 
+			//x and y values are used to set a colour to a new bitmap.
 			for (int y = 0; y < imageHeight; y++)
 			{
 				for (int x = 0; x < imageWidth; x++, i++)
@@ -81,9 +87,14 @@ namespace NEA_Project
 
 			return pixels;
 		}
-
+		
+		//The goal of this funciton is to convert any pixels in the pixels array into one of two
+		//possible colours, black or white. This does not include grey scale, only black
+		//and white colours should be returned.
 		public static void HSBPixels()
-		{
+		{	
+			//imageArea will also be the amount of colours present in the pixels array.
+			//As we need to loop through every value in the array, we can just use the image area.
 			for (int i = 0; i < imageArea; i++)
 			{
 				float pixelHue = pixels[i].GetHue();
