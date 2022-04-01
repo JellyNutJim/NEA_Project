@@ -56,7 +56,9 @@ namespace NEA_Project
 
 				//Sql reader queries the database.
 				using (SqlDataReader reader = cmd.ExecuteReader())
-				{
+				{	
+					//The while loop will repeat for every value that was fetched.
+					//E.g. every username in the database.
 					while (reader.Read())
 					{
 						user_Names.AddLast(reader.GetString(0));
@@ -166,15 +168,15 @@ namespace NEA_Project
 
 		// ------------------------------------------------------------------------------------------------------------------------------ DB_Management page related database code.
 
-		//Adds the new file to the Saved_Files table, as well as adding the filetype to the File_Data table. 
+		//Adds the new file to the Saved_Files table.
 		public bool add_New_File(int User_ID, string File_Name, string File_Type, string File_Binary, string compression_String, int compressed_File_Size, DateTime date_Of_Creation)
 		{
+			//The SQL query. The binary which is saved as a string is casted to a varbinay(max) type so it is more space efficient in the database.
 			string query = "INSERT INTO Saved_Files(User_ID, File_Name, File_Type, Saved_File, Compression_String, Compressed_File_Size, Date_Of_Creation) VALUES(@UserID, @FileName, @FileType, CAST(@SavedFile as VARBINARY(MAX)), @CompressionString, @CompressedFileSize, @DateOfCreation);";
 			try
 			{
 				using (connection = new SqlConnection(connectionString))
 				{
-
 					using (SqlCommand command = new SqlCommand(query, connection))
 					{
 						command.CommandType = CommandType.Text;
@@ -202,31 +204,45 @@ namespace NEA_Project
 				return false;
 			}
 		}
-
+		
+		//This function will return the general data about files linked to a specific user.
+		//The data returned does not include the contents of the file of the compression string used to decompress that file.
 		public LinkedList<Saved_File_Data> get_All_Files(int User_ID)
 		{
+			//The SQL query.
 			string query = "SELECT File_Name, File_Type, Compressed_File_Size, Date_Of_Creation FROM Saved_Files WHERE User_ID = @UserID";
+			
+			//At his point during the execution of the function the amount of files this specific user has is unkown.
+			//Therefore I am using a linked list as it is a dynamic data type that can increase in size with each
+			//piece of file data added.
 			LinkedList<Saved_File_Data> data = new LinkedList<Saved_File_Data>();
-
+			
+			//Create a connect and created a new command object.
 			using (connection = new SqlConnection(connectionString))
 			{
 				using (SqlCommand command = new SqlCommand(query, connection))
-				{
+				{	
+					//The only type of information being retreived is in a text format.
 					command.CommandType = CommandType.Text;
-
-					//Enter the parameters into the query.
+					
+					//Enter the user_ID as a parameter.
 					command.Parameters.AddWithValue("@UserID", User_ID);
-
+					
+					//Open the connection and create a new sql reader to retreive the data.
 					connection.Open();
 					using (SqlDataReader reader = command.ExecuteReader())
 					{
-						
+						//Allows the reader to read data from the database, the while loop will repeat for however many
+						//files belong to this user.
 						while (reader.Read())
 						{
+							//Store the values needed as variables.
 							string File_Name = reader.GetString(0);
 							string File_Type = reader.GetString(1);
 							int C_File_Size = reader.GetInt32(2);
 							DateTime DOC = reader.GetDateTime(3);
+							
+							//Create a new Saved_File_Data object and add it to the end of the linked list.
 							data.AddLast(new Saved_File_Data(File_Name, File_Type, C_File_Size, DOC));
 						}
 						reader.Close();
@@ -235,10 +251,15 @@ namespace NEA_Project
 			}
 				return data;
 		}
-
+		
+		//Gets the actual data of a given file that belongs to a specific user.
 		public string[] get_Saved_File(int User_ID, string File_Name)
 		{
+			//The SQL query that will fetched the file binary and the compression string.
+			//The binary is casted to a nvarchar.
 			string query = "SELECT CAST(Saved_File as NVARCHAR(max)), Compression_String FROM Saved_Files WHERE User_ID = @UserID AND File_Name = @FileName";
+			
+			//The data will be returned as an array with the binary in the first element, and the compression string in the second.
 			string[] fileAndCS = new string[2];
 
 			using (connection = new SqlConnection(connectionString))
@@ -254,6 +275,7 @@ namespace NEA_Project
 					{
 						while (reader.Read())
 						{
+							//Assign the array with the binary string, and the compression string.
 							fileAndCS[0] = reader.GetString(0);
 							fileAndCS[1] = reader.GetString(1);
 						}
