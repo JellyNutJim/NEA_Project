@@ -18,7 +18,7 @@ namespace NEA_Project
 		private ComboBox comboReturn;
 		private int x;
 		private int y;
-		DBTool tool;
+		private DBTool tool;
 
 		//The constructor.
 		//The User_ID is used so that the user is only shown their own files.
@@ -40,13 +40,13 @@ namespace NEA_Project
 		private void DB_Load_Page_Load(object sender, EventArgs e)
 		{
 			//Gets general data about the file, not including the file or the compression string as this would just be wasted processing.
-			LinkedList<Saved_File_Data> data = tool.get_All_Files(User_ID);
+			LinkedList<SavedFileData> data = tool.get_All_Files(User_ID);
 			
 			//While the data linkedlist is not empty,
 			while (data.First != null)
 			{
 				//Gets the first object in the data linkedlist.
-				Saved_File_Data temp = data.First.Value;
+				SavedFileData temp = data.First.Value;
 
 				//Creates a new object of listItemView.
 				//This object can be inserted into a List_Viewer form object as a new section of the table.
@@ -364,14 +364,14 @@ namespace NEA_Project
 	}
 
 	//A custom datatype that will contain information from Saved_File entrys from the Saved_Files data table. 
-	class Saved_File_Data
+	class SavedFileData
 	{
 		public string file_Name;
 		public string file_Type;
 		public int compressed_File_Size;
 		public DateTime date_Of_Creation;
 
-		public Saved_File_Data(string File_Name, string File_Type, int Compressed_File_Size, DateTime Date_Of_Creation)
+		public SavedFileData(string File_Name, string File_Type, int Compressed_File_Size, DateTime Date_Of_Creation)
 		{
 			file_Name = File_Name;
 			file_Type = File_Type;

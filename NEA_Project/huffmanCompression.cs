@@ -14,6 +14,8 @@ using System.Data.SqlClient;
 
 namespace NEA_Project
 {
+	//The objects of this class will be used to create a huffman tree, each object acting as a node on that tree.
+	//Each object will either contain a letter and its frequency, or the cumulative frequency of the attached nodes.
 	class letterData
 	{
 		private char character;

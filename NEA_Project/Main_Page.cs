@@ -139,7 +139,7 @@ namespace NEA_Project
             Progress_Bar.Style = ProgressBarStyle.Blocks;
             Progress_Bar.Value = 0;
 
-            createLetter tempLetters = split();
+            SplitImageToLetters tempLetters = split();
             if (tempLetters != null)
             {
                 int width = 0;
@@ -356,7 +356,7 @@ namespace NEA_Project
 
         // The following code contains functions that will be made use of multiple times by various button interactions. --------------------------------------------
 
-        private createLetter split()
+        private SplitImageToLetters split()
         {
             //An image with a removed background is not present
             if (Input_Img_Display.Image != null)
@@ -388,7 +388,7 @@ namespace NEA_Project
 
                 //Splits image into chracters.
                 Bitmap image = new Bitmap(BackgroundEdit.finalImage);
-                createLetter newLetter = new createLetter(image);
+                SplitImageToLetters newLetter = new SplitImageToLetters(image);
                 return newLetter;
             }
             else

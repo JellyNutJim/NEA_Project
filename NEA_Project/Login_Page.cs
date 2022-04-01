@@ -21,11 +21,13 @@ namespace NEA_Project
 
         public login_page()
         {
+            /*
             Main_Page mp = new Main_Page(12);
             mp.Show();
 
             DB_Save_Page dp = new DB_Save_Page("This is a test", 12);
             dp.Show();
+            */
 
             InitializeComponent();
             tool = new DBTool();
@@ -35,17 +37,70 @@ namespace NEA_Project
         //Checks if the users log in details are corrrect, and then forwards them to the main page.
         public void Login_Btn_Click(object sender, EventArgs e)
         {
+            logIntoAccount();
+        }
+
+        //Function called when a new account creation is requested.
+        //Before data is checked agaisnt database, the basic standards are checked. (E.g. whether a capital is present)
+        private void createAccount_Btn_Click(object sender, EventArgs e)
+        {
+            createNewAccount();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void login_page_Load(object sender, EventArgs e)
+        {   
+
+		}
+
+		private void password_input_Click(object sender, EventArgs e)
+        {
+
+        }
+
+		private void label1_Click_1(object sender, EventArgs e)
+		{
+           
+		}
+
+		private void button1_Click_1(object sender, EventArgs e)
+		{
+
+		}
+
+		private void file_DataBindingNavigatorSaveItem_Click(object sender, EventArgs e)
+		{
+
+
+		}
+
+		private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
+		}
+        
+        private void logIntoAccount()
+		{
             //Get user entered values.
             String attemptedUserName = user_Name_Entry.Text;
             String attemptedPassword = password_Entry.Text;
             bool userExists = false;
 
             if (attemptedUserName == "" || attemptedPassword == "")
-			{
+            {
                 MessageBox.Show("Please enter both a username and password first.");
-			}
-			else
-			{
+            }
+            else
+            {
                 //Gets each user name present in the User_Data table.
                 //The attempted username is then compared agaisnt these to check if it exists.
                 foreach (string user_Name in tool.check_Table_For_Values())
@@ -104,23 +159,20 @@ namespace NEA_Project
                 MessageBox.Show("Too many failed log in attempts, please try again later.");
                 Application.Exit();
             }
-
         }
 
-        //Function called when a new account creation is requested.
-        //Before data is checked agaisnt database, the basic standards are checked. (E.g. whether a capital is present)
-        private void createAccount_Btn_Click(object sender, EventArgs e)
-        {
+        private void createNewAccount()
+		{
             //Get user entered values.
             String requestedUserName = user_Name_Entry.Text;
             String requestedPassword = password_Entry.Text;
 
             if (requestedUserName == "" || requestedPassword == "")
-			{
+            {
                 MessageBox.Show("Please enter both a username and password first.");
-			}
-			else
-			{
+            }
+            else
+            {
                 //Checks if both the username and password match the basic format criteria.
                 if (usernameFormatCheck(requestedUserName))
                 {
@@ -139,10 +191,10 @@ namespace NEA_Project
                                 break;
                             }
                         }
-                        //If the username does not exist, and the passowrd meets the format requirements, then a new account can be created.
+                        //If the username does not exist, and the passowrd meets the format requirements, then a new account can be created. and added to the database.
                         if (!exists)
                         {
-                            createAccount(requestedUserName, requestedPassword);
+                            addAccountToDatabase(requestedUserName, requestedPassword);
                         }
                     }
                 }
@@ -152,47 +204,6 @@ namespace NEA_Project
                 }
             }
         }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void login_page_Load(object sender, EventArgs e)
-        {   
-
-		}
-
-		private void password_input_Click(object sender, EventArgs e)
-        {
-
-        }
-
-		private void label1_Click_1(object sender, EventArgs e)
-		{
-           
-		}
-
-		private void button1_Click_1(object sender, EventArgs e)
-		{
-
-		}
-
-		private void file_DataBindingNavigatorSaveItem_Click(object sender, EventArgs e)
-		{
-
-
-		}
-
-		private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-		{
-
-		}
 
         private bool usernameFormatCheck(string username)
 		{
@@ -274,7 +285,7 @@ namespace NEA_Project
             return true;
         }
 
-        private void createAccount(string username, string password)
+        private void addAccountToDatabase(string username, string password)
 		{
             //Create userID hash
             string user_ID_Hash = createHash(username, password);
@@ -451,8 +462,6 @@ namespace NEA_Project
                         break;
                 }
             }
-
-
             return result;
         }
 
@@ -468,21 +477,6 @@ namespace NEA_Project
 
             return toLengthen;
         }
-
-
-
-
-
-
-        //Temp encoding function
-        private string EncodePasswordToBase64(string password)
-        {
-            byte[] encData_byte = new byte[password.Length];
-            encData_byte = System.Text.Encoding.UTF8.GetBytes(password);
-            string encodedData = Convert.ToBase64String(encData_byte);
-            return encodedData;
-        }
-
 
     }
 }

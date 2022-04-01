@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundEdit.cs" />
-    <Compile Include="ConvertToText.cs" />
+    <Compile Include="SplitImageToLetters.cs" />
     <Compile Include="DBTool.cs" />
     <Compile Include="DB_Load_Page.cs">
       <SubType>Form</SubType>
@@ -84,6 +84,7 @@
       <DependentUpon>enter_File_Name_Page.cs</DependentUpon>
     </Compile>
     <Compile Include="huffmanCompression.cs" />
+    <Compile Include="letterPixels.cs" />
     <Compile Include="Login_Page.cs">
       <SubType>Form</SubType>
     </Compile>
