@@ -12,7 +12,6 @@ namespace NEA_Project
 {
 	public partial class DB_Save_Page : Form
 	{
-		//If string is parsed as an argument then the 
 		private DBTool tool;
 		private string fileType;
 		private string compressionString;
@@ -30,7 +29,8 @@ namespace NEA_Project
 			fileType = "txt";
 		}
 
-		//This constructor is called when the user is trying to save an image file.
+		//This overload constructor is called when the user is trying to save an image file.
+		//The file type is defined as an image, and the inputed image is saved to the picture box on this form page.
 		public DB_Save_Page(Image imageToSave, int User_ID)
 		{
 			InitializeComponent();
@@ -50,19 +50,26 @@ namespace NEA_Project
 			Console.WriteLine($"Filetype is {fileType}");
 		}
 
+		//Called when the Save_File_Btn is clicked.
+		//The goal of this function is to firstly:
+		// - Validate the name of a file
+		// - Select the correct compression algorithm bassed on the filetype
+		// - Save said file to the database
 		private void Save_File_Btn_Click(object sender, EventArgs e)
 		{
+			//Get the requested username from the text box.
 			string requestedFileName = File_Name_Entry.Text;
 
-			//If the file name matches a certain set of requirements.
+			//Check if the file name meets the correct standard.
 			if (checkFileNameFormat(requestedFileName))
 			{
-				//Call certain functions bassed on what file type the user has entered.
+				//Create the variables that will be entered into the database.
 				string FileInBinary;
 				int originalSizeInBits;
 				int compressedFileSizeInBits;
 				DateTime dateOfCreation = DateTime.Now;
-
+				
+				//The switch statement will call a different compression function bassed on filetype.
 				switch (fileType)
 				{
 					case "txt":
@@ -70,6 +77,10 @@ namespace NEA_Project
 						//This includes the compressed text, as well as various pieces of data relating to that text.
 						//One example being the compressionString -> this string is what will be used to decode the compressed text.
 						Console.WriteLine("Calling compressText");
+						
+						//Compress the text and save it to a variable.
+						//The compression string is also given a value, but is saved as a global variable as we can only return one
+						//value from the function.
 						FileInBinary = compressText(Save_Text_Box.Text);
 						originalSizeInBits = Save_Text_Box.Text.Length * 8;
 						compressedFileSizeInBits = FileInBinary.Length;
@@ -83,20 +94,21 @@ namespace NEA_Project
 						{
 							MessageBox.Show("File could not be saved.");
 						}
-
+						
+						//Once the file has been saved this form object can be deleted.
 						Close();
 						break;
 
 					case "img":
 						//Compress image into binary
 						Console.WriteLine("Calling compressImage");
+						
+						//The file is converted to binary and the compression string is again saved to a global variable.
 						FileInBinary = compressImage(Save_Image_Box.Image);
 						originalSizeInBits = Save_Image_Box.Size.Width * Save_Image_Box.Image.Width * 8 * 3;
 						compressedFileSizeInBits = FileInBinary.Length;
 
 						Loading_Bar.Increment(1);
-
-						//The compression string in this case, represents the length of one group of colours.
 
 						if (tool.add_New_File(User_ID, requestedFileName, "image", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
 						{
@@ -106,11 +118,13 @@ namespace NEA_Project
 						{
 							MessageBox.Show("File could not be saved.");
 						}
-
+						
+						//Once the file has been saved this form object can be deleted.
 						Close();
 						break;
 
 					default:
+						MessageBox.Show("An unkown error has occurred");
 						break;
 				}
 
@@ -143,21 +157,30 @@ namespace NEA_Project
 			//This system will also make it incrediby easy to decompress.
 
 			//Setup the loading bar.
+			//Unfortunatly the loading bar will never be particularly accurate as it
+			//is only updated a few times.
+			//This is because incrmenting the loading bar during a loop is extremely time inefficient
+			//and slows down the program.
 			Loading_Bar.Maximum = 4;
 			Loading_Bar.Style = ProgressBarStyle.Blocks;
 			Loading_Bar.Value = 0;
-
+			
+			//Convert the image into a bitmap.
 			Bitmap bitmapToCompress = new Bitmap(imgToCompress);
+			
+			//A linked list is used to contain each block of compressed pixels.
+			//A linked list must be used as the amount of blocks cannot be known beforehand.
 			LinkedList<String> tempBinaryHolder = new LinkedList<string>();
 			string bitmapAsCompressedBinary = "", colour = "";
+			
+			//The amount of repeated colours in a row.
 			int amountOfRepeats = 0;
 
-			//The loading bar is not incremented during the while loop.
-			//This is because it significantly reduces the speed of the program.
 			Loading_Bar.Increment(1);
 
 			//Checks each pixel along the x and y coordinates.
-			//Line by line.
+			//Line by line. Each row is checked before moving onto the next.
+			//Hence the y is incremented first.
 			for (int y = 0; y < bitmapToCompress.Height; y++)
 			{
 				for (int x = 0; x < bitmapToCompress.Width; x++)
@@ -165,17 +188,21 @@ namespace NEA_Project
 					amountOfRepeats = 0;
 
 					//Check for white groups. --> I check for white first as the majority of pixels will be white.
+					//Therefore we can reduce the overall amount of checks.
 					if (y < bitmapToCompress.Height - 1 && !isBlack(bitmapToCompress.GetPixel(x, y)))
-					{
+					{	
+						// '0' represents white pixels.
 						colour = "0";
 
-						//Continue until a pixel is black.
+						//Increase the amount of repeated pixels for every white pixels after the original
+						//white pixels. While doing this the x and y values should be incremented appropriately.
 						do
 						{
 							amountOfRepeats++;
 							x++;
 
-							//Check if we have reached the end of a line.
+							//Check if we have reached the end of a line, and therefore need to increment y to move
+							//to the next line.
 							if (x == bitmapToCompress.Width)
 							{
 								y++;
@@ -191,7 +218,8 @@ namespace NEA_Project
 						x--;
 					}
 					else if (y < bitmapToCompress.Height - 1)
-					{
+					{	
+						//Functions the same as the previous while loop expect for black pixels.
 						colour = "1";
 						do
 						{
@@ -214,12 +242,15 @@ namespace NEA_Project
 						while (isBlack(bitmapToCompress.GetPixel(x, y)));
 						x--;
 					}
-
+					
+					//If there are no repeats then the function is complete.
 					if (amountOfRepeats == 0)
 					{
 						break;
 					}
 
+					//Add the repeating pixels, and the colour to the binary holder.
+					//The int of amount of repeats is converted to binary.
 					tempBinaryHolder.AddLast($"{convertToBinary(amountOfRepeats)}{colour}");
 				}
 			}
@@ -234,6 +265,7 @@ namespace NEA_Project
 			compressionString += width + "_" + height;
 
 			//Find the longest binary string, and add 0s to all the other strings so they are the same standard length.
+			//This is done so that when decompressing, we can distiguish between colour segments.
 			int maxLength = 0;
 
 			//Defines maxlength to be the length of the sequence with the highest length.
@@ -247,7 +279,6 @@ namespace NEA_Project
 
 			//Increases the length of the other binary sequences to be equal to the longest sequence.
 			//Then we add all of those binary sequence into the main string bitmapAsCompressedBinary.
-
 			string tempSequence;
 			
 			while (tempBinaryHolder.First != null)
@@ -264,10 +295,13 @@ namespace NEA_Project
 			}
 
 			Loading_Bar.Increment(1);
+			
+			//Add the maxlength of each segment to the compression string.
+			//This is needed so that the decompression algorithm knows how to split up the segments.
 			compressionString += "_" + Convert.ToString(maxLength);
 
 			Console.WriteLine(bitmapAsCompressedBinary);
-
+				
 			return bitmapAsCompressedBinary;
 		}
 
@@ -285,8 +319,6 @@ namespace NEA_Project
 			return binary;
 		}
 
-
-		//MAKE INTO A STATIC FUNCTION IN A SEPERATE CLASS AS BG REMOVE ALSO USES THIS FUNCTION
 		private bool isBlack(Color pixel)
 		{
 			if (pixel.GetBrightness() <= 0.2)
@@ -429,6 +461,7 @@ namespace NEA_Project
 			//We now have a table of out letters and their new binary substitutes.
 			string textInBinary = "";
 			
+			//Use the table of binary substitutes to rebuild the input text as binary.
 			foreach (char character in textToCompress)
 			{
 				for (int i = 0; i < letAndBin.Length; i++)
@@ -449,17 +482,21 @@ namespace NEA_Project
 		private bool letterExists(LinkedList<letterData> letters, char character)
 		{
 			foreach (letterData letterData in letters)
-			{
+			{	
+				//If the letter already exists, then we can increment its frequency.
 				if (character == letterData.Character)
 				{
 					letterData.Frequency += 1;
 					return true;
 				}
 			}
+			
+			//The character was not present in the linked list.
 			return false;
 		}
 
 		//Takes in a linked list of letterData and returns an array of characters in ascending order of frequency.
+		//Uses a simple bubble sort.
 		private LinkedList<letterData> bubbleSort(LinkedList<letterData> listToSort)
 		{
 			LinkedList<letterData> sortedLL = new LinkedList<letterData>();
@@ -469,13 +506,13 @@ namespace NEA_Project
 			//Convert listToSort into an array that will be used for sorting.
 			int counter = 0;
 
-			foreach (letterData l in listToSort)
+			foreach (letterData data in listToSort)
 			{
-				orderedLetters[counter] = l;
+				orderedLetters[counter] = data;
 				counter++;
 			}
 
-			//Replace sort type??
+			//Bubble sort algorithm.
 			for (int i = 0; i < length - 1; i++)
 			{
 				for (int p = 0; p < length - i - 1; p++)
@@ -488,10 +525,11 @@ namespace NEA_Project
 					}
 				}
 			}
-
-			foreach (letterData l in orderedLetters)
+			
+			//Convert the array back into a linked list for future use.
+			foreach (letterData data in orderedLetters)
 			{
-				sortedLL.AddLast(l);
+				sortedLL.AddLast(data);
 			}
 
 			return sortedLL;
