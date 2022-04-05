@@ -287,6 +287,7 @@ namespace NEA_Project
 
 				while (tempSequence.Length < maxLength)
 				{
+					//A value of "0" is added as this will not effect the actual values of the binary sequence.
 					tempSequence = "0" + tempSequence;
 				}
 				bitmapAsCompressedBinary += tempSequence;
@@ -368,7 +369,7 @@ namespace NEA_Project
 
 			int len = sortedData.Count();
 
-			//Now a huffman tree can be created.
+			//Now a huffman tree can be created using this frequency table.
 			
 			while (len > 1)
 			{
@@ -376,7 +377,8 @@ namespace NEA_Project
 				//Get the first node from sorted data.
 				letterData firstNode = sortedData.First();
 				sortedData.RemoveFirst();
-
+				
+				//Get the second node from sorted data.
 				letterData secondNode = sortedData.First();
 				sortedData.RemoveFirst();
 
