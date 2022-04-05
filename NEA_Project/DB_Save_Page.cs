@@ -370,7 +370,6 @@ namespace NEA_Project
 			int len = sortedData.Count();
 
 			//Now a huffman tree can be created using this frequency table.
-			
 			while (len > 1)
 			{
 				//Console.WriteLine(len);
@@ -381,9 +380,14 @@ namespace NEA_Project
 				//Get the second node from sorted data.
 				letterData secondNode = sortedData.First();
 				sortedData.RemoveFirst();
-
+				
 				//Hold letter values in seperate linked list.
 				//This is done so we can fetch the binary codes to represent the letters.
+				
+				//When I refer to a branch, I am refering to nodes on the tree that do not contain
+				//Theses 'branches' are used to connect the nodes with characters together and only
+				//contain the cumulative frequency of the tree up until that point.
+
 				if (firstNode.branch == false)
 				{
 					letterBinary.AddLast(firstNode);
@@ -393,21 +397,27 @@ namespace NEA_Project
 				{
 					letterBinary.AddLast(secondNode);
 				}
-
+				
+				//The cumulative frequency of this node is the frequency of the two children of said node.
 				int cumulativeFrequency = firstNode.Frequency + secondNode.Frequency;
 
 				letterData freqNode = new letterData(cumulativeFrequency);
 				freqNode.leftNode = firstNode;
 				freqNode.rightNode = secondNode;
-
+				
+				//Add an extra bit to the child nodes.
+				//The children of these nodes continue to add these values to their own child nodes.
+				//This repeats until every node below the current node has its binary updated.
 				freqNode.leftNode.addBit("0");
 				freqNode.rightNode.addBit("1");
 
 				//Place node back into linked list.
 				bool placed = false;
-
 				LinkedList<letterData> tempData = new LinkedList<letterData>();
-
+				
+				//The node is placed back into the linked list bassed on its frequency.
+				//The following is a linear search algorithm that finds the first node with a frequency (or cumulative frequency)
+				//lower than the frequency of the current node. It then enters the current node at that position.
 				while (sortedData.First != null)
 				{
 					letterData temp = sortedData.First();
@@ -419,7 +429,9 @@ namespace NEA_Project
 					}
 					sortedData.RemoveFirst();
 				}
-
+				
+				//If placed is not true, then it was bigger than every other node currently present,
+				//so it can be placed at the end of the list.
 				if (!placed)
 				{
 					tempData.AddLast(freqNode);
@@ -444,16 +456,21 @@ namespace NEA_Project
 
 			Loading_Bar.Increment(1);
 
-			//Now we have created our huffman tree, we need to create binary codes for each of the letters.
+			//The huffman tree has now been generated. It should contain a binary sequence for each unique character.
 			//Left is 0, right is 1.
 
 			letterAndBinaryCode[] letAndBin = new letterAndBinaryCode[letterBinary.Count];
 			int counter = 0;
-
+			
+			//Using the huffman tree a now table can be created.#
+			//This table will contain all letters present in the original string, as well as their binary sequence equivilent.
+			//The compression string is also generated. It is essentially the same of the table, except in a single string.
 			while (letterBinary.First != null)
 			{
 				letAndBin[counter] = new letterAndBinaryCode(letterBinary.First.Value.Character, letterBinary.First.Value.binaryCode);
 				compressionString += $"'{letterBinary.First.Value.Character}{letterBinary.First.Value.binaryCode}";
+				
+				//The first value in the linked list is removed, so the other values are moved forwards.
 				letterBinary.RemoveFirst();
 				counter++;
 			}
@@ -506,15 +523,16 @@ namespace NEA_Project
 			letterData[] orderedLetters = new letterData[length];
 
 			//Convert listToSort into an array that will be used for sorting.
+			//An array is much easier to sort than a linked list, hence why it is converted.
+			
 			int counter = 0;
-
 			foreach (letterData data in listToSort)
 			{
 				orderedLetters[counter] = data;
 				counter++;
 			}
 
-			//Bubble sort algorithm.
+			//We now just perfom a simple bubble sort, ordering the list bassed on the frequency value.
 			for (int i = 0; i < length - 1; i++)
 			{
 				for (int p = 0; p < length - i - 1; p++)
