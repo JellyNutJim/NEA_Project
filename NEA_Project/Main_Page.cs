@@ -60,15 +60,22 @@ namespace NEA_Project
 				foreach (string picture in ((string[])e.Data.GetData(DataFormats.FileDrop)))
 				{
 					Image img = Image.FromFile(picture);
+					
+					//Sets the image property of the Input_Image_Display to the input img.
+					//This image will be reffered back to several times during the programs execution.
 					Input_Img_Display.Image = img;
+					
+					//Set the size mode to zoom, so the image is scaled to the size of the picture box.
+					//This makes the image significantly easier to see when the program is being used.
 					Input_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
 				}
 			}
-			catch (Exception)
+			catch (e)
 			{
 				//Informs the user that the input was not in the correct format.
 				Image_Error_Display.BringToFront();
 				Image_Error_Display.Text = "Please enter a valid image";
+				MessageBox.Show("Please enter a valid image (png/jpeg)");
 			}
 		}
 
@@ -225,20 +232,24 @@ namespace NEA_Project
 
                         if (getFolderLocation.ShowDialog() == DialogResult.OK)
                         {
+			    //Save the path of the selected download location.
                             string folderLocation = getFolderLocation.SelectedPath;
-
+                            
+			    //Create a new instance of the enter_File_Name_Page and halt the main page until this page has closed.
                             enter_File_Name_Page efnp = new enter_File_Name_Page(filename_Holder);
                             efnp.ShowDialog();
-
+			    
+			    //Get the users desired filename from the filename_Holder object that was assigned to by the enter_File_Name_Page.
                             string filename = filename_Holder.Text;
-
+			    
+			    //Attempt to save the file to the users pc.
                             try
                             {
                                 Result_Img_Display.Image.Save(folderLocation + $@"\{filename}.png");
                                 MessageBox.Show("Download Successful");
                                 Result_Text_Display.SendToBack();
                             }
-                            catch
+                            catch  //Could be thrown for a few reasons. An example being if a drive does not have enough space to store the file.
                             {
                                 MessageBox.Show("Download Failed");
                             }
@@ -251,8 +262,11 @@ namespace NEA_Project
                     break;
 
                 case "Multiple Images":
+		    //The letters linked list at this point should contain all the bitmaps produced after the split_Letters_Btn_Click function was run.
+		    //The linked list would be null if this function was not run prior to the download button being clicked.
                     if (letters.First != null)
                     {
+		    	//Aquires the the folder location and the desired file name using the same method as the single image download option.
                         FolderBrowserDialog getFolderLocation = new FolderBrowserDialog();
 
                         if (getFolderLocation.ShowDialog() == DialogResult.OK)
@@ -264,11 +278,13 @@ namespace NEA_Project
                             efnp.ShowDialog();
 
                             string filename = filename_Holder.Text;
-
+			    //Attempt to save the files to the users pc.
                             try
                             {
                                 foreach (Bitmap letter in letters)
                                 {
+			            //As there will be multiple files, they cannot all have the same name.
+				    //So an incrementing number is placed after the name of each saved image.
                                     letter.Save(folderLocation + $@"\{filename}{num}.png");
                                     Result_Img_Display.Image = null;
                                     num++;
@@ -289,8 +305,12 @@ namespace NEA_Project
                     break;
 
                 case "Text File":
+	            //Checks if there text is present in the Result_Text_Display text box.
+		    //Text should be present in this text box after either the convert to text function was run.
+		    //Or a text file has just been loaded from the database.
                     if (Result_Text_Display.Text != null)
 					{
+			//Aquires the the folder location and the desired file name using the same method as the single image download option.
                         FolderBrowserDialog getFolderLocation = new FolderBrowserDialog();
 
                         if (getFolderLocation.ShowDialog() == DialogResult.OK)
@@ -301,7 +321,7 @@ namespace NEA_Project
                             efnp.ShowDialog();
 
                             string filename = filename_Holder.Text;
-
+			    //A new streamwriter object is created and used to save the users file to a specified location.
                             using (StreamWriter sw = new StreamWriter(folderLocation + $@"\{filename}.txt"))
 							{
                                 sw.WriteLine(Result_Text_Display.Text);

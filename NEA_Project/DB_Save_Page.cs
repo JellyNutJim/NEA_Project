@@ -12,7 +12,6 @@ namespace NEA_Project
 {
 	public partial class DB_Save_Page : Form
 	{
-		//If string is parsed as an argument then the 
 		private DBTool tool;
 		private string fileType;
 		private string compressionString;
@@ -30,7 +29,8 @@ namespace NEA_Project
 			fileType = "txt";
 		}
 
-		//This constructor is called when the user is trying to save an image file.
+		//This overload constructor is called when the user is trying to save an image file.
+		//The file type is defined as an image, and the inputed image is saved to the picture box on this form page.
 		public DB_Save_Page(Image imageToSave, int User_ID)
 		{
 			InitializeComponent();
@@ -50,19 +50,26 @@ namespace NEA_Project
 			Console.WriteLine($"Filetype is {fileType}");
 		}
 
+		//Called when the Save_File_Btn is clicked.
+		//The goal of this function is to firstly:
+		// - Validate the name of a file
+		// - Select the correct compression algorithm bassed on the filetype
+		// - Save said file to the database
 		private void Save_File_Btn_Click(object sender, EventArgs e)
 		{
+			//Get the requested username from the text box.
 			string requestedFileName = File_Name_Entry.Text;
 
-			//If the file name matches a certain set of requirements.
+			//Check if the file name meets the correct standard.
 			if (checkFileNameFormat(requestedFileName))
 			{
-				//Call certain functions bassed on what file type the user has entered.
+				//Create the variables that will be entered into the database.
 				string FileInBinary;
 				int originalSizeInBits;
 				int compressedFileSizeInBits;
 				DateTime dateOfCreation = DateTime.Now;
-
+				
+				//The switch statement will call a different compression function bassed on filetype.
 				switch (fileType)
 				{
 					case "txt":
@@ -70,11 +77,16 @@ namespace NEA_Project
 						//This includes the compressed text, as well as various pieces of data relating to that text.
 						//One example being the compressionString -> this string is what will be used to decode the compressed text.
 						Console.WriteLine("Calling compressText");
+						
+						//Compress the text and save it to a variable.
+						//The compression string is also given a value, but is saved as a global variable as we can only return one
+						//value from the function.
 						FileInBinary = compressText(Save_Text_Box.Text);
 						originalSizeInBits = Save_Text_Box.Text.Length * 8;
 						compressedFileSizeInBits = FileInBinary.Length;
 
-						//Write the compressed binary and the compression string to the console for testing.
+						//The following for each loops are just used to write values to the console during testing.
+						/*
 						int p = 0;
 						Console.WriteLine("Binary String: ");
 						foreach (char c in FileInBinary)
@@ -107,7 +119,7 @@ namespace NEA_Project
 							}
 
 							Console.Write(c);
-						}
+						} */
 
 						//The add_New_File function returns a bool bassed on whether the query was completed successfully.
 						if (tool.add_New_File(User_ID, requestedFileName, "text", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
@@ -118,20 +130,21 @@ namespace NEA_Project
 						{
 							MessageBox.Show("File could not be saved.");
 						}
-
+						
+						//Once the file has been saved this form object can be deleted.
 						Close();
 						break;
 
 					case "img":
 						//Compress image into binary
 						Console.WriteLine("Calling compressImage");
+						
+						//The file is converted to binary and the compression string is again saved to a global variable.
 						FileInBinary = compressImage(Save_Image_Box.Image);
 						originalSizeInBits = Save_Image_Box.Size.Width * Save_Image_Box.Image.Width * 8 * 3;
 						compressedFileSizeInBits = FileInBinary.Length;
 
 						Loading_Bar.Increment(1);
-
-						//The compression string in this case, represents the length of one group of colours.
 
 						if (tool.add_New_File(User_ID, requestedFileName, "image", FileInBinary, compressionString, compressedFileSizeInBits, dateOfCreation))
 						{
@@ -141,11 +154,13 @@ namespace NEA_Project
 						{
 							MessageBox.Show("File could not be saved.");
 						}
-
+						
+						//Once the file has been saved this form object can be deleted.
 						Close();
 						break;
 
 					default:
+						MessageBox.Show("An unkown error has occurred");
 						break;
 				}
 
@@ -178,21 +193,30 @@ namespace NEA_Project
 			//This system will also make it incrediby easy to decompress.
 
 			//Setup the loading bar.
+			//Unfortunatly the loading bar will never be particularly accurate as it
+			//is only updated a few times.
+			//This is because incrmenting the loading bar during a loop is extremely time inefficient
+			//and slows down the program.
 			Loading_Bar.Maximum = 4;
 			Loading_Bar.Style = ProgressBarStyle.Blocks;
 			Loading_Bar.Value = 0;
-
+			
+			//Convert the image into a bitmap.
 			Bitmap bitmapToCompress = new Bitmap(imgToCompress);
+			
+			//A linked list is used to contain each block of compressed pixels.
+			//A linked list must be used as the amount of blocks cannot be known beforehand.
 			LinkedList<String> tempBinaryHolder = new LinkedList<string>();
 			string bitmapAsCompressedBinary = "", colour = "";
+			
+			//The amount of repeated colours in a row.
 			int amountOfRepeats = 0;
 
-			//The loading bar is not incremented during the while loop.
-			//This is because it significantly reduces the speed of the program.
 			Loading_Bar.Increment(1);
 
 			//Checks each pixel along the x and y coordinates.
-			//Line by line.
+			//Line by line. Each row is checked before moving onto the next.
+			//Hence the y is incremented first.
 			for (int y = 0; y < bitmapToCompress.Height; y++)
 			{
 				for (int x = 0; x < bitmapToCompress.Width; x++)
@@ -200,17 +224,21 @@ namespace NEA_Project
 					amountOfRepeats = 0;
 
 					//Check for white groups. --> I check for white first as the majority of pixels will be white.
+					//Therefore we can reduce the overall amount of checks.
 					if (y < bitmapToCompress.Height - 1 && !isBlack(bitmapToCompress.GetPixel(x, y)))
-					{
+					{	
+						// '0' represents white pixels.
 						colour = "0";
 
-						//Continue until a pixel is black.
+						//Increase the amount of repeated pixels for every white pixels after the original
+						//white pixel. While doing this the x and y values should be incremented appropriately.
 						do
 						{
 							amountOfRepeats++;
 							x++;
 
-							//Check if we have reached the end of a line.
+							//Check if we have reached the end of a line, and therefore need to increment y to move
+							//to the next line.
 							if (x == bitmapToCompress.Width)
 							{
 								y++;
@@ -227,6 +255,10 @@ namespace NEA_Project
 					}
 					else if (y < bitmapToCompress.Height - 1)
 					{
+						//Functions the same as the previous while loop expect for black pixels.
+
+						// '1' represents black pixels.
+
 						colour = "1";
 						do
 						{
@@ -249,12 +281,15 @@ namespace NEA_Project
 						while (isBlack(bitmapToCompress.GetPixel(x, y)));
 						x--;
 					}
-
+					
+					//If there are no repeats then the function is complete.
 					if (amountOfRepeats == 0)
 					{
 						break;
 					}
 
+					//Add the repeating pixels, and the colour to the binary holder.
+					//The int of amount of repeats is converted to binary.
 					tempBinaryHolder.AddLast($"{convertToBinary(amountOfRepeats)}{colour}");
 				}
 			}
@@ -269,6 +304,7 @@ namespace NEA_Project
 			compressionString += width + "_" + height;
 
 			//Find the longest binary string, and add 0s to all the other strings so they are the same standard length.
+			//This is done so that when decompressing, we can distiguish between colour segments.
 			int maxLength = 0;
 
 			//Defines maxlength to be the length of the sequence with the highest length.
@@ -282,7 +318,6 @@ namespace NEA_Project
 
 			//Increases the length of the other binary sequences to be equal to the longest sequence.
 			//Then we add all of those binary sequence into the main string bitmapAsCompressedBinary.
-
 			string tempSequence;
 			
 			while (tempBinaryHolder.First != null)
@@ -291,6 +326,7 @@ namespace NEA_Project
 
 				while (tempSequence.Length < maxLength)
 				{
+					//A value of "0" is added as this will not effect the actual values of the binary sequence.
 					tempSequence = "0" + tempSequence;
 				}
 				bitmapAsCompressedBinary += tempSequence;
@@ -299,6 +335,9 @@ namespace NEA_Project
 			}
 
 			Loading_Bar.Increment(1);
+			
+			//Add the maxlength of each segment to the compression string.
+			//This is needed so that the decompression algorithm knows how to split up the segments.
 			compressionString += "_" + Convert.ToString(maxLength);
 
 			Console.WriteLine("Compressed binary: ");
@@ -333,8 +372,6 @@ namespace NEA_Project
 			return binary;
 		}
 
-
-		//MAKE INTO A STATIC FUNCTION IN A SEPERATE CLASS AS BG REMOVE ALSO USES THIS FUNCTION
 		private bool isBlack(Color pixel)
 		{
 			if (pixel.GetBrightness() <= 0.2)
@@ -416,20 +453,25 @@ namespace NEA_Project
 
 			int len = sortedData.Count();
 
-			//Now a huffman tree can be created.
-			
+			//Now a huffman tree can be created using this frequency table.
 			while (len > 1)
 			{
 				//Console.WriteLine(len);
 				//Get the first node from sorted data.
 				letterData firstNode = sortedData.First();
 				sortedData.RemoveFirst();
-
+				
+				//Get the second node from sorted data.
 				letterData secondNode = sortedData.First();
 				sortedData.RemoveFirst();
-
+				
 				//Hold letter values in seperate linked list.
 				//This is done so we can fetch the binary codes to represent the letters.
+				
+				//When I refer to a branch, I am refering to nodes on the tree that do not contain
+				//Theses 'branches' are used to connect the nodes with characters together and only
+				//contain the cumulative frequency of the tree up until that point.
+
 				if (firstNode.branch == false)
 				{
 					letterBinary.AddLast(firstNode);
@@ -439,21 +481,27 @@ namespace NEA_Project
 				{
 					letterBinary.AddLast(secondNode);
 				}
-
+				
+				//The cumulative frequency of this node is the frequency of the two children of said node.
 				int cumulativeFrequency = firstNode.Frequency + secondNode.Frequency;
 
 				letterData freqNode = new letterData(cumulativeFrequency);
 				freqNode.leftNode = firstNode;
 				freqNode.rightNode = secondNode;
-
+				
+				//Add an extra bit to the child nodes.
+				//The children of these nodes continue to add these values to their own child nodes.
+				//This repeats until every node below the current node has its binary updated.
 				freqNode.leftNode.addBit("0");
 				freqNode.rightNode.addBit("1");
 
 				//Place node back into linked list.
 				bool placed = false;
-
 				LinkedList<letterData> tempData = new LinkedList<letterData>();
-
+				
+				//The node is placed back into the linked list bassed on its frequency.
+				//The following is a linear search algorithm that finds the first node with a frequency (or cumulative frequency)
+				//lower than the frequency of the current node. It then enters the current node at that position.
 				while (sortedData.First != null)
 				{
 					letterData temp = sortedData.First();
@@ -465,7 +513,9 @@ namespace NEA_Project
 					}
 					sortedData.RemoveFirst();
 				}
-
+				
+				//If placed is not true, then it was bigger than every other node currently present,
+				//so it can be placed at the end of the list.
 				if (!placed)
 				{
 					tempData.AddLast(freqNode);
@@ -490,16 +540,21 @@ namespace NEA_Project
 
 			Loading_Bar.Increment(1);
 
-			//Now we have created our huffman tree, we need to create binary codes for each of the letters.
+			//The huffman tree has now been generated. It should contain a binary sequence for each unique character.
 			//Left is 0, right is 1.
 
 			letterAndBinaryCode[] letAndBin = new letterAndBinaryCode[letterBinary.Count];
 			int counter = 0;
-
+			
+			//Using the huffman tree a now table can be created.#
+			//This table will contain all letters present in the original string, as well as their binary sequence equivilent.
+			//The compression string is also generated. It is essentially the same of the table, except in a single string.
 			while (letterBinary.First != null)
 			{
 				letAndBin[counter] = new letterAndBinaryCode(letterBinary.First.Value.Character, letterBinary.First.Value.binaryCode);
 				compressionString += $"'{letterBinary.First.Value.Character}{letterBinary.First.Value.binaryCode}";
+				
+				//The first value in the linked list is removed, so the other values are moved forwards.
 				letterBinary.RemoveFirst();
 				counter++;
 			}
@@ -509,6 +564,7 @@ namespace NEA_Project
 			//We now have a table of out letters and their new binary substitutes.
 			string textInBinary = "";
 			
+			//Use the table of binary substitutes to rebuild the input text as binary.
 			foreach (char character in textToCompress)
 			{
 				for (int i = 0; i < letAndBin.Length; i++)
@@ -529,17 +585,21 @@ namespace NEA_Project
 		private bool letterExists(LinkedList<letterData> letters, char character)
 		{
 			foreach (letterData letterData in letters)
-			{
+			{	
+				//If the letter already exists, then we can increment its frequency.
 				if (character == letterData.Character)
 				{
 					letterData.Frequency += 1;
 					return true;
 				}
 			}
+			
+			//The character was not present in the linked list.
 			return false;
 		}
 
 		//Takes in a linked list of letterData and returns an array of characters in ascending order of frequency.
+		//Uses a simple bubble sort.
 		private LinkedList<letterData> bubbleSort(LinkedList<letterData> listToSort)
 		{
 			LinkedList<letterData> sortedLL = new LinkedList<letterData>();
@@ -547,15 +607,16 @@ namespace NEA_Project
 			letterData[] orderedLetters = new letterData[length];
 
 			//Convert listToSort into an array that will be used for sorting.
+			//An array is much easier to sort than a linked list, hence why it is converted.
+			
 			int counter = 0;
-
-			foreach (letterData l in listToSort)
+			foreach (letterData data in listToSort)
 			{
-				orderedLetters[counter] = l;
+				orderedLetters[counter] = data;
 				counter++;
 			}
 
-			//Replace sort type??
+			//We now just perfom a simple bubble sort, ordering the list bassed on the frequency value.
 			for (int i = 0; i < length - 1; i++)
 			{
 				for (int p = 0; p < length - i - 1; p++)
@@ -568,10 +629,11 @@ namespace NEA_Project
 					}
 				}
 			}
-
-			foreach (letterData l in orderedLetters)
+			
+			//Convert the array back into a linked list for future use.
+			foreach (letterData data in orderedLetters)
 			{
-				sortedLL.AddLast(l);
+				sortedLL.AddLast(data);
 			}
 
 			return sortedLL;
