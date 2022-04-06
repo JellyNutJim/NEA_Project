@@ -70,7 +70,7 @@ namespace NEA_Project
 					Input_Img_Display.SizeMode = PictureBoxSizeMode.Zoom;
 				}
 			}
-			catch (e)
+			catch (Exception)
 			{
 				//Informs the user that the input was not in the correct format.
 				Image_Error_Display.BringToFront();
@@ -92,33 +92,14 @@ namespace NEA_Project
 			//Else display an error to the user.
 			if (Input_Img_Display.Image != null)
 			{
-				Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
-
                 Current_Status_Label.Visible = true;
                 Current_Status_Label.Text = "Loading...";
                 Progress_Bar.Maximum = 5;
                 Progress_Bar.Style = ProgressBarStyle.Blocks;
                 Progress_Bar.Value = 0;
 
-                Current_Status_Label.Text = "Loading image";
-                BackgroundEdit.InputImage = bitmappedImage;
-                Progress_Bar.Increment(1);
 
-                Current_Status_Label.Text = "Loading Bar";
-                BackgroundEdit.loadingBar = Progress_Bar;
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Getting all Pixels";
-                BackgroundEdit.GetAllPixels();
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Increase HSB Values";
-                BackgroundEdit.HSBPixels();
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Setting new Pixels";
-                BackgroundEdit.SetAllPixels();
-                Progress_Bar.Increment(1);
+                Bitmap bitmappedImage = removeBG(Input_Img_Display.Image);
             }
 			else
 			{
@@ -361,6 +342,20 @@ namespace NEA_Project
                 DB_Save_Page dbs = new DB_Save_Page(Result_Img_Display.Image, User_ID);
                 dbs.Show();
 			}
+            else if (Input_Img_Display.Image != null)
+            {
+                //If no data is present in the Result_Img_Display then we know a user is attempting to directly save an input.
+                Current_Status_Label.Visible = true;
+                Current_Status_Label.Text = "Loading...";
+                Progress_Bar.Maximum = 5;
+                Progress_Bar.Style = ProgressBarStyle.Blocks;
+                Progress_Bar.Value = 0;
+
+                Bitmap input_Image_Removed_BG = removeBG(Input_Img_Display.Image);
+
+                DB_Save_Page dbs = new DB_Save_Page((Image)input_Image_Removed_BG, User_ID);
+                dbs.Show();
+            }
 			else
 			{
                 MessageBox.Show("There is nothing to save");
@@ -381,29 +376,7 @@ namespace NEA_Project
             //An image with a removed background is not present
             if (Input_Img_Display.Image != null)
             {
-                Bitmap bitmappedImage = new Bitmap(Input_Img_Display.Image);
-
-                Current_Status_Label.Visible = true;
-
-                Current_Status_Label.Text = "Loading image";
-                BackgroundEdit.InputImage = bitmappedImage;
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Loading Bar";
-                BackgroundEdit.loadingBar = Progress_Bar;
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Getting all Pixels";
-                BackgroundEdit.GetAllPixels();
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Increase HSB Values";
-                BackgroundEdit.HSBPixels();
-                Progress_Bar.Increment(1);
-
-                Current_Status_Label.Text = "Setting new Pixels";
-                BackgroundEdit.SetAllPixels();
-                Progress_Bar.Increment(1);
+                Bitmap bitmappedImage = removeBG(Input_Img_Display.Image);
 
 
                 //Splits image into chracters.
@@ -421,6 +394,35 @@ namespace NEA_Project
             }
 
             return null;
+        }
+
+        private Bitmap removeBG(Image imageToEdit)
+		{
+            Bitmap bitmappedImage = new Bitmap(imageToEdit);
+
+            Current_Status_Label.Visible = true;
+
+            Current_Status_Label.Text = "Loading image";
+            BackgroundEdit.InputImage = bitmappedImage;
+            Progress_Bar.Increment(1);
+
+            Current_Status_Label.Text = "Loading Bar";
+            BackgroundEdit.loadingBar = Progress_Bar;
+            Progress_Bar.Increment(1);
+
+            Current_Status_Label.Text = "Getting all Pixels";
+            BackgroundEdit.GetAllPixels();
+            Progress_Bar.Increment(1);
+
+            Current_Status_Label.Text = "Increase HSB Values";
+            BackgroundEdit.HSBPixels();
+            Progress_Bar.Increment(1);
+
+            Current_Status_Label.Text = "Setting new Pixels";
+            BackgroundEdit.SetAllPixels();
+            Progress_Bar.Increment(1);
+
+            return bitmappedImage;
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

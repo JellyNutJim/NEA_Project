@@ -21,17 +21,18 @@ namespace NEA_Project
 
         public login_page()
         {
-            
+            /*   
             Main_Page mp = new Main_Page(12);
             mp.Show();
             
             DB_Save_Page dp = new DB_Save_Page("This is a test", 12);
-            dp.Show();
+            dp.Show();*/
             
 
             InitializeComponent();
             tool = new DBTool();
             fails = 0;
+            Validate_Password_Label.SendToBack();
         }
 
 
@@ -137,7 +138,7 @@ namespace NEA_Project
                         mp.Show();
                         MessageBox.Show("Login  Successful");
                     }
-		    //The else statements show the user an error message bassed on the particular error they encountered.
+		            //The else statements show the user an error message bassed on the particular error they encountered.
                     else if (user_Actual_Hash == "fail")
                     {
                         fails += 1;
@@ -169,7 +170,7 @@ namespace NEA_Project
             String requestedUserName = user_Name_Entry.Text;
             String requestedPassword = password_Entry.Text;
 	    
-		//Makes sure that there are values present in both text boxes before continuing.
+		    //Makes sure that there are values present in both text boxes before continuing.
             if (requestedUserName == "" || requestedPassword == "")
             {
                 MessageBox.Show("Please enter both a username and password first.");
@@ -187,7 +188,7 @@ namespace NEA_Project
                         bool exists = false;
                         foreach (string user_Name in tool.check_Table_For_Values())
                         {
-			    //If there is a match, the username already exists.
+			                //If there is a match, the username already exists.
                             if (requestedUserName == user_Name)
                             {
                                 MessageBox.Show("Username already exist, please choose a different name");
@@ -198,8 +199,18 @@ namespace NEA_Project
                         //If the username does not exist, and the passowrd meets the format requirements, then a new account can be created. and added to the database.
                         if (!exists)
                         {
-                            addAccountToDatabase(requestedUserName, requestedPassword);
-			    //The user is then automatically logged in.
+                            verifyPassword vp = new verifyPassword(Validate_Password_Label);
+                            vp.ShowDialog();
+
+                            if (requestedPassword == Validate_Password_Label.Text)
+							{
+                                addAccountToDatabase(requestedUserName, requestedPassword);
+                                //The user is then automatically logged in.
+                            }
+							else
+							{
+                                MessageBox.Show("Passwords did not match, please try again.");
+							}            
                         }
                     }
                 }
@@ -210,7 +221,7 @@ namespace NEA_Project
             }
         }
 	
-	//This function validates that a username is within a valid size.
+	    //This function validates that a username is within a valid size.
         private bool usernameFormatCheck(string username)
 		{
             if (username.Length <= 5 || username.Length > 64)
@@ -221,7 +232,7 @@ namespace NEA_Project
             return true;
 		}
 
-	//This function validates that a password is within a valid size and meets the basic format requirements.
+	    //This function validates that a password is within a valid size and meets the basic format requirements.
         private bool passwordFormatCheck(string password)
 		{
             string requestedPassword = password;
@@ -247,7 +258,7 @@ namespace NEA_Project
                 errors += "Password must be at least 10 characters long\n";
             }
 		
-	    //Checks if the password is no longer than 64 characters.
+	        //Checks if the password is no longer than 64 characters.
             if (requestedPassword.Length > 64)
 			{
                 containsError = true;
@@ -296,15 +307,15 @@ namespace NEA_Project
         private void addAccountToDatabase(string username, string password)
 		{
 		
-	    //Creates a new entry in the User_Data table containing the username, and a unqiue hash.
-	    //A unqiue User_ID is also generated, although this happens automatically through my SQL table statement.
+	        //Creates a new entry in the User_Data table containing the username, and a unqiue hash.
+	        //A unqiue User_ID is also generated, although this happens automatically through my SQL table statement.
             tool.add_New_User_Data(username, createHash(username, password));
             MessageBox.Show("Account creation successful!");
 
             //Get the newly generated User_ID
             int User_ID = tool.get_Int_From_Table(username);
 		
-	    //Close the login page and open a new main page passing the new User_ID as an argument.
+	        //Close the login page and open a new main page passing the new User_ID as an argument.
             this.Hide();
             Main_Page mp = new Main_Page(User_ID);
             mp.Show();
@@ -313,15 +324,15 @@ namespace NEA_Project
         }
 
         //Creates a unique composite hash using both the username and password.
-	//Returns the same value every time for an identical set of inputs.
+	    //Returns the same value every time for an identical set of inputs.
         private string createHash(string username, string password)
 		{
             string longString;
             string shortString;
             string passAndUser = username + password;
 	    
-	    //It is unlikely that the user and password will be the same length,
-	    //Therefore we save the longer value to 'longString' and the shorter value to 'shortString'
+	        //It is unlikely that the user and password will be the same length,
+	        //Therefore we save the longer value to 'longString' and the shorter value to 'shortString'
             if (username.Length > password.Length)
             {
                 longString = username;
@@ -335,8 +346,8 @@ namespace NEA_Project
 		
             LinkedList<char> charList = new LinkedList<char>();
 		
-	    //Combine the two strings into a single string with alternating letters.
-	    //This only combines as many letters as are in the short string.
+	        //Combine the two strings into a single string with alternating letters.
+	        //This only combines as many letters as are in the short string.
             int i;
             for (i = 0; i < shortString.Length; i++)
             {
@@ -344,19 +355,19 @@ namespace NEA_Project
                 charList.AddLast(longString[i]);
             }
 		
-	    //Any excess letters frm the long string are added to the begining and end of the char list
-	    //in a alternating pattern.
+	        //Any excess letters frm the long string are added to the begining and end of the char list
+	        //in a alternating pattern.
             for (i = i; i < longString.Length; i++)
             {
                 //If i is even.
                 if (i % 2 == 0)
                 {
-   		    //Place the letter at the start of the list. 
+   		        //Place the letter at the start of the list. 
                     charList.AddFirst(longString[i]);
                 }
                 else
                 {
-		    //Place the letter at the end of the list. 
+		        //Place the letter at the end of the list. 
                     charList.AddLast(longString[i]);
                 }
             }
@@ -370,13 +381,13 @@ namespace NEA_Project
             //Contains the result of the XOR function.
             string[] hash = new string[charList.Count()];
 		
-	    //The follwing two loops convert toHash and the key into a binary sequence.
-	    //Each character is converted to ascii.
+	        //The follwing two loops convert toHash and the key into a binary sequence.
+	        //Each character is converted to ascii.
             int d = 0;
             int maxLength = 0;
             foreach (char c in charList)
             {
-	    	//Convert to base 2
+	    	    //Convert to base 2
                 toHash[d] = Convert.ToString(c, 2);
                 if (toHash[d].Length > maxLength)
                 {
@@ -397,7 +408,7 @@ namespace NEA_Project
             }
 
             //Some of the binary sequences may be 7 or fewer bits, its important to increase their
-	    //length so it is equal to that of the longest binary sequence. If this is not done then, the
+	        //length so it is equal to that of the longest binary sequence. If this is not done then, the
             toHash = increaseLength(toHash, maxLength);
             key = increaseLength(key, maxLength);
 
@@ -409,15 +420,15 @@ namespace NEA_Project
                 counter++;
             }
 	    
-	    //Convert the binary sequence into a hexadecimal sequence.
+	        //Convert the binary sequence into a hexadecimal sequence.
             d = 0;
             maxLength = 0;
             foreach (string c in hash)
             {
-	    	//Convert to base 16.
+	    	    //Convert to base 16.
                 hash[d] = Convert.ToString(binaryToDenary(c), 16);
 		
-		//The max length is also recorded,
+		        //The max length is also recorded,
                 if (hash[d].Length > maxLength)
                 {
                     maxLength = hash[d].Length;
@@ -426,10 +437,10 @@ namespace NEA_Project
             }
 	    
             //Increase the length of each hexadecimal number to the same amount of characters.
-	    //The returned value is saved into the hash array.
+	        //The returned value is saved into the hash array.
             hash = increaseLength(hash, maxLength);
 	    
-	    //Place each value in the hash array into a string.
+	        //Place each value in the hash array into a string.
             string finalHash = "";
             foreach (string c in hash)
             {
@@ -439,7 +450,7 @@ namespace NEA_Project
             return finalHash;
         }
         
-	//Converts a denary number into its binary equivilent.
+	    //Converts a denary number into its binary equivilent.
         private int binaryToDenary(string binary)
         {
             int denary = 0;
@@ -460,14 +471,14 @@ namespace NEA_Project
             return denary;
         }
 	
-	//Takes two strings that contain a binary sequence and performs an XOR logic operation.
+	    //Takes two strings that contain a binary sequence and performs an XOR logic operation.
         private string XOR(string str, string key)
         {
             //Loops through both of the strings and compares characters with the same index.
             string result = "";
             for (int i = 0; i < str.Length; i++)
             {
-	    	//Compares the 4 possible value pairs for the binary digits.
+	    	    //Compares the 4 possible value pairs for the binary digits.
                 switch (str[i])
                 {
                     case '0':
@@ -498,16 +509,16 @@ namespace NEA_Project
             return result;
         }
 	
-	//Takes an array containing string of a varying size, and increases every string's length to be equivilent to
-	//a specified integer.
+	    //Takes an array containing string of a varying size, and increases every string's length to be equivilent to
+	    //a specified integer.
         private static string[] increaseLength(string[] toLengthen, int requiredLength)
         {
             for (int i = 0; i < toLengthen.Length; i++)
             {
                 while (toLengthen[i].Length < requiredLength)
                 {
-		    //The value being added to the string will either be a one or a zero.
-		    //This depends on whether i is currently even or odd.
+		            //The value being added to the string will either be a one or a zero.
+		            //This depends on whether i is currently even or odd.
                     toLengthen[i] = toLengthen[i] + (i % 2);
                 }
             }

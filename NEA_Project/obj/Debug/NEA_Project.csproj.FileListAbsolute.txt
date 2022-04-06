@@ -30,3 +30,4 @@ C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NE
 C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.enter_File_Name_Page.resources
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.DB_Load_Page.resources
 C:\Users\oscar\Documents\GitHub\NEA_Project\NEA_Project\obj\Debug\NEA_Project.enter_File_Name_Page.resources
+C:\Users\Oscar Hoodsmith\Documents\NEA\code\NEA_Project\NEA_Project\obj\Debug\NEA_Project.verifyPassword.resources

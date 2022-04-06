@@ -70,7 +70,7 @@ namespace NEA_Project
 		}
 
 		//By default, this function returns the password for a specfic username, but it can also any other string from any table.
-		public string get_String_From_Table(string commanValue, string query = "SELECT User_Hash FROM User_Data WHERE User_Name = @commaoValueToEnter;")
+		public string get_String_From_Table(string commanValue, string query = "SELECT User_Hash FROM User_Data WHERE User_Name = @commonValueToEnter;")
 		{
 			string fetchedData = "";
 

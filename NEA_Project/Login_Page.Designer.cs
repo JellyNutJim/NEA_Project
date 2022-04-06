@@ -37,6 +37,7 @@ namespace NEA_Project
 			this.createAccount_Btn = new System.Windows.Forms.Button();
 			this.small_background = new System.Windows.Forms.PictureBox();
 			this.Title_Label = new System.Windows.Forms.Label();
+			this.Validate_Password_Label = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.small_background)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -125,11 +126,21 @@ namespace NEA_Project
 			this.Title_Label.TabIndex = 8;
 			this.Title_Label.Text = "NEA Project";
 			// 
+			// Validate_Password_Label
+			// 
+			this.Validate_Password_Label.AutoSize = true;
+			this.Validate_Password_Label.Location = new System.Drawing.Point(471, 178);
+			this.Validate_Password_Label.Name = "Validate_Password_Label";
+			this.Validate_Password_Label.Size = new System.Drawing.Size(35, 13);
+			this.Validate_Password_Label.TabIndex = 9;
+			this.Validate_Password_Label.Text = "empty";
+			// 
 			// login_page
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.Validate_Password_Label);
 			this.Controls.Add(this.Title_Label);
 			this.Controls.Add(this.createAccount_Btn);
 			this.Controls.Add(this.password_input);
@@ -158,6 +169,7 @@ namespace NEA_Project
         private System.Windows.Forms.Button createAccount_Btn;
         private System.Windows.Forms.PictureBox small_background;
         private System.Windows.Forms.Label Title_Label;
-    }
+		private System.Windows.Forms.Label Validate_Password_Label;
+	}
 }
 

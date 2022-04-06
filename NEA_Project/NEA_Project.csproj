@@ -106,6 +106,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentence.cs" />
+    <Compile Include="verifyPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="verifyPassword.Designer.cs">
+      <DependentUpon>verifyPassword.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="DB_Load_Page.resx">
       <DependentUpon>DB_Load_Page.cs</DependentUpon>
     </EmbeddedResource>
@@ -131,6 +137,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="verifyPassword.resx">
+      <DependentUpon>verifyPassword.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="NEA_DataDataSet.xsc">
       <DependentUpon>NEA_DataDataSet.xsd</DependentUpon>
     </None>
