@@ -21,7 +21,8 @@ namespace NEA_Project
 		private char character;
 		private int frequency;
 		private string[] data = new string[2];
-
+		
+		//The tree will be made out of letterData nodes, each node can have two nodes attached to itself.
 		public letterData leftNode;
 		public letterData rightNode;
 
@@ -38,13 +39,17 @@ namespace NEA_Project
 			data[0] = Convert.ToString(character);
 			data[1] = Convert.ToString(frequency);
 		}
-
+		
+		//If a cumulative frequency is set, then we know that this node is a branch,
+		//and will therefore not contain a letter.
 		public letterData(int cumulativeFrequency)
 		{
 			this.frequency = cumulativeFrequency;
 			branch = true;
 		}
-
+		
+		//When a bit is added to a node, all nodes that are attached to it should also receive that new bit.
+		//This function will recursively until all nodes below the current node have be altered. 
 		public void addBit(string bit)
 		{
 			this.binaryCode = bit + binaryCode;
@@ -77,7 +82,8 @@ namespace NEA_Project
 		}
 
 	}
-
+	
+	//Used to create a table containing characters and their equivilent binary code.
 	class letterAndBinaryCode
 	{
 		public char character;
