@@ -114,19 +114,24 @@ namespace NEA_Project
 
 				//Increase saturation and brightness
 				pixelSaturation *= 2;
+				
+				//Max value of saturation is 1. So if its greater than this value, it should be set back to 1.
 				if (pixelSaturation > 1)
 				{
 					pixelSaturation = 1;
 				}
-
+				
+				//Double the brightness of every pixel.
 				pixelBrightness *= 2f;
+				
+				//Max value of brightness is 1. So if its greater than this value, it should be set back to 1.
 				if (pixelBrightness > 1)
-
 				{
 					pixelBrightness = 1;
 				}
 
-				
+				//If the brightness is below 0.9, set the pixel to be black.
+				//Else the pixel will be white.
 				if (pixelBrightness < 0.9)
 				{
 					pixelBrightness = 0;
