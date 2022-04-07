@@ -89,6 +89,7 @@ namespace NEA_Project
 						pxToCheck.AddLast(px);
 
 						//While the linked list is not empty, the loop will repeat.
+						//Creates a chain of objects representing a letter.
 						while (pxToCheck.First != null)
 						{
 							//Gets the first object from the linked list.
@@ -107,7 +108,7 @@ namespace NEA_Project
 								startY = pxs.y;
 							}
 
-							//Checks the left pixel of the current object.
+							//Checks the left pixel of the current pixel.
 							if (CheckBlack(input_Image.GetPixel(pxs.x - 1, pxs.y)))
 							{
 								pixelsInLetter++;
@@ -127,7 +128,7 @@ namespace NEA_Project
                             //The following check if statements function the same as check left.
                             //They are just checking different coordinates.
 
-                            //Check Right
+                            //Check the pixel to the right of the current pixel.
                             if (CheckBlack(input_Image.GetPixel(pxs.x + 1, pxs.y)))
 							{
 								pixelsInLetter += 1;
@@ -144,7 +145,7 @@ namespace NEA_Project
 								input_Image.SetPixel(pxs.x + 1, pxs.y, Color.FromArgb(255, 255, 255));
 							}
 
-                            //Check Up
+                            //Check the pixel above the current pixel.
                             if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y - 1)))
 							{
 								pixelsInLetter += 1;
@@ -156,7 +157,7 @@ namespace NEA_Project
 								input_Image.SetPixel(pxs.x, pxs.y - 1, Color.FromArgb(255, 255, 255));
 							}
 
-                            //Check Down
+                            //Check the pixel below the current pixel.
                             if (CheckBlack(input_Image.GetPixel(pxs.x, pxs.y + 1)))
 							{
 								pixelsInLetter += 1;
@@ -235,6 +236,7 @@ namespace NEA_Project
 						LinkedList<letterPixels> nextPx = new LinkedList<letterPixels>();
 						nextPx.AddLast(initialOrigin);
 						
+						//The loop reapets until a letter object graph has been completely reconstructed in the new bitmap/
 						while (nextPx.First != null)
 						{
 							letterPixels write = nextPx.First.Value; //Change variable name ---------------------------------------------------
